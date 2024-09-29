@@ -1,30 +1,32 @@
 package edu.zafu.teaai.service.impl;
 
-import static edu.zafu.teaai.constant.UserConstant.USER_LOGIN_STATE;
-
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import edu.zafu.teaai.common.ErrorCode;
-import edu.zafu.teaai.constant.CommonConstant;
 import edu.zafu.teaai.common.exception.BusinessException;
+import edu.zafu.teaai.constant.CommonConstant;
+import edu.zafu.teaai.constant.UserConstant;
 import edu.zafu.teaai.mapper.UserMapper;
 import edu.zafu.teaai.model.dto.user.UserQueryRequest;
-import edu.zafu.teaai.model.po.User;
 import edu.zafu.teaai.model.enums.UserRoleEnum;
+import edu.zafu.teaai.model.po.User;
 import edu.zafu.teaai.model.vo.LoginUserVO;
 import edu.zafu.teaai.model.vo.UserVO;
 import edu.zafu.teaai.service.UserService;
 import edu.zafu.teaai.utils.SqlUtils;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-import javax.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static edu.zafu.teaai.constant.UserConstant.USER_LOGIN_STATE;
 
 /**
  * 用户服务实现
@@ -46,11 +48,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (StringUtils.isAnyBlank(userAccount, userPassword, checkPassword)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数为空");
         }
-        if (userAccount.length() < 4) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户账号过短");
+        if (!userAccount.matches(UserConstant.ACCOUNT_REGEX)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号由字母、数字组成，长度在4-20位之间");
         }
-        if (userPassword.length() < 8 || checkPassword.length() < 8) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户密码过短");
+        if (!userPassword.matches(UserConstant.PASSWORD_REGEX) || !checkPassword.matches(UserConstant.PASSWORD_REGEX)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "密码由字母、数字组成，长度在6-20位之间");
         }
         // 密码和校验密码相同
         if (!userPassword.equals(checkPassword)) {
@@ -84,11 +86,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (StringUtils.isAnyBlank(userAccount, userPassword)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数为空");
         }
-        if (userAccount.length() < 4) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号错误");
-        }
-        if (userPassword.length() < 8) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "密码错误");
+        if (!userAccount.matches(UserConstant.ACCOUNT_REGEX)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号由字母、数字组成，长度在4-20位之间");
         }
         // 2. 加密
         String encryptPassword = DigestUtils.md5DigestAsHex((SALT + userPassword).getBytes());
@@ -110,9 +109,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     /**
      * 获取当前登录用户
-     *
-     * @param request
-     * @return
      */
     @Override
     public User getLoginUser(HttpServletRequest request) {
@@ -133,9 +129,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     /**
      * 获取当前登录用户（允许未登录）
-     *
-     * @param request
-     * @return
      */
     @Override
     public User getLoginUserPermitNull(HttpServletRequest request) {
@@ -152,9 +145,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     /**
      * 是否为管理员
-     *
-     * @param request
-     * @return
      */
     @Override
     public boolean isAdmin(HttpServletRequest request) {
@@ -171,8 +161,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     /**
      * 用户注销
-     *
-     * @param request
      */
     @Override
     public boolean userLogout(HttpServletRequest request) {
@@ -218,8 +206,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "请求参数为空");
         }
         Long id = userQueryRequest.getId();
-        String unionId = userQueryRequest.getUnionId();
-        String mpOpenId = userQueryRequest.getMpOpenId();
         String userName = userQueryRequest.getUserName();
         String userProfile = userQueryRequest.getUserProfile();
         String userRole = userQueryRequest.getUserRole();
@@ -227,8 +213,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         String sortOrder = userQueryRequest.getSortOrder();
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(id != null, "id", id);
-        queryWrapper.eq(StringUtils.isNotBlank(unionId), "unionId", unionId);
-        queryWrapper.eq(StringUtils.isNotBlank(mpOpenId), "mpOpenId", mpOpenId);
         queryWrapper.eq(StringUtils.isNotBlank(userRole), "userRole", userRole);
         queryWrapper.like(StringUtils.isNotBlank(userProfile), "userProfile", userProfile);
         queryWrapper.like(StringUtils.isNotBlank(userName), "userName", userName);
