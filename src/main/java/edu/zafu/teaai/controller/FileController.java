@@ -8,7 +8,7 @@ import edu.zafu.teaai.constant.FileConstant;
 import edu.zafu.teaai.common.exception.BusinessException;
 import edu.zafu.teaai.manager.CosManager;
 import edu.zafu.teaai.model.dto.file.UploadFileRequest;
-import edu.zafu.teaai.model.entity.User;
+import edu.zafu.teaai.model.po.User;
 import edu.zafu.teaai.model.enums.FileUploadBizEnum;
 import edu.zafu.teaai.service.UserService;
 import java.io.File;

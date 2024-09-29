@@ -10,7 +10,7 @@ import edu.zafu.teaai.constant.CommonConstant;
 import edu.zafu.teaai.common.exception.BusinessException;
 import edu.zafu.teaai.mapper.UserMapper;
 import edu.zafu.teaai.model.dto.user.UserQueryRequest;
-import edu.zafu.teaai.model.entity.User;
+import edu.zafu.teaai.model.po.User;
 import edu.zafu.teaai.model.enums.UserRoleEnum;
 import edu.zafu.teaai.model.vo.LoginUserVO;
 import edu.zafu.teaai.model.vo.UserVO;

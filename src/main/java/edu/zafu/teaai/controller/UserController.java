@@ -15,7 +15,7 @@ import edu.zafu.teaai.model.dto.user.UserQueryRequest;
 import edu.zafu.teaai.model.dto.user.UserRegisterRequest;
 import edu.zafu.teaai.model.dto.user.UserUpdateMyRequest;
 import edu.zafu.teaai.model.dto.user.UserUpdateRequest;
-import edu.zafu.teaai.model.entity.User;
+import edu.zafu.teaai.model.po.User;
 import edu.zafu.teaai.model.vo.LoginUserVO;
 import edu.zafu.teaai.model.vo.UserVO;
 import edu.zafu.teaai.service.UserService;

@@ -1,4 +1,4 @@
-package edu.zafu.teaai.model.entity;
+package edu.zafu.teaai.model.po;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;

@@ -3,7 +3,7 @@ package edu.zafu.teaai.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import edu.zafu.teaai.model.dto.user.UserQueryRequest;
-import edu.zafu.teaai.model.entity.User;
+import edu.zafu.teaai.model.po.User;
 import edu.zafu.teaai.model.vo.LoginUserVO;
 import edu.zafu.teaai.model.vo.UserVO;
 
