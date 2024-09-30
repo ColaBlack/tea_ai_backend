@@ -11,6 +11,7 @@ import java.util.Date;
 
 /**
  * 评分结果
+ * @author ColaBlack
  * @TableName scoring_result
  */
 @TableName(value ="scoring_result")

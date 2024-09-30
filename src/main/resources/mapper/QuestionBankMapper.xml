@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="edu.zafu.teaai.mapper.QuestionBankMapper">
 
-    <resultMap id="BaseResultMap" type="generator.domain.QuestionBank">
+    <resultMap id="BaseResultMap" type="edu.zafu.teaai.model.po.QuestionBank">
             <id property="id" column="id" jdbcType="BIGINT"/>
             <result property="bankName" column="bank_name" jdbcType="VARCHAR"/>
             <result property="bankDesc" column="bank_desc" jdbcType="VARCHAR"/>

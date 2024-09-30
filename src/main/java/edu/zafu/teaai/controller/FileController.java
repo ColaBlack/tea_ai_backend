@@ -4,17 +4,13 @@ import cn.hutool.core.io.FileUtil;
 import edu.zafu.teaai.common.BaseResponse;
 import edu.zafu.teaai.common.ErrorCode;
 import edu.zafu.teaai.common.ResultUtils;
-import edu.zafu.teaai.constant.FileConstant;
 import edu.zafu.teaai.common.exception.BusinessException;
+import edu.zafu.teaai.constant.FileConstant;
 import edu.zafu.teaai.manager.CosManager;
 import edu.zafu.teaai.model.dto.file.UploadFileRequest;
-import edu.zafu.teaai.model.po.User;
 import edu.zafu.teaai.model.enums.FileUploadBizEnum;
+import edu.zafu.teaai.model.po.User;
 import edu.zafu.teaai.service.UserService;
-import java.io.File;
-import java.util.Arrays;
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,6 +18,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.util.Arrays;
 
 /**
  * 文件接口

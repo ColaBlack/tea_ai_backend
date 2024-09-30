@@ -11,6 +11,7 @@ import java.util.Date;
 
 /**
  * 用户答题记录
+ * @author ColaBlack
  * @TableName user_answer
  */
 @TableName(value ="user_answer")

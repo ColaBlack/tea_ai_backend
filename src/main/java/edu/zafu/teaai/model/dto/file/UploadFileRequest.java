@@ -1,7 +1,8 @@
 package edu.zafu.teaai.model.dto.file;
 
-import java.io.Serializable;
 import lombok.Data;
+
+import java.io.Serializable;
 
 /**
  * 文件上传请求

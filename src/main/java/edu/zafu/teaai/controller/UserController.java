@@ -6,33 +6,23 @@ import edu.zafu.teaai.common.BaseResponse;
 import edu.zafu.teaai.common.DeleteRequest;
 import edu.zafu.teaai.common.ErrorCode;
 import edu.zafu.teaai.common.ResultUtils;
-import edu.zafu.teaai.constant.UserConstant;
 import edu.zafu.teaai.common.exception.BusinessException;
 import edu.zafu.teaai.common.exception.ThrowUtils;
-import edu.zafu.teaai.model.dto.user.UserAddRequest;
-import edu.zafu.teaai.model.dto.user.UserLoginRequest;
-import edu.zafu.teaai.model.dto.user.UserQueryRequest;
-import edu.zafu.teaai.model.dto.user.UserRegisterRequest;
-import edu.zafu.teaai.model.dto.user.UserUpdateMyRequest;
-import edu.zafu.teaai.model.dto.user.UserUpdateRequest;
+import edu.zafu.teaai.constant.UserConstant;
+import edu.zafu.teaai.model.dto.user.*;
 import edu.zafu.teaai.model.po.User;
 import edu.zafu.teaai.model.vo.LoginUserVO;
 import edu.zafu.teaai.model.vo.UserVO;
 import edu.zafu.teaai.service.UserService;
-
-import java.util.List;
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.DigestUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 import static edu.zafu.teaai.service.impl.UserServiceImpl.SALT;
 

@@ -11,6 +11,7 @@ import java.util.Date;
 
 /**
  * 题库表
+ * @author ColaBlack
  * @TableName question_bank
  */
 @TableName(value ="question_bank")
