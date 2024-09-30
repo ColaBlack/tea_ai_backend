@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.zafu.teaai.mapper.QuestionBankMapper">
+
+    <resultMap id="BaseResultMap" type="generator.domain.QuestionBank">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="bankName" column="bank_name" jdbcType="VARCHAR"/>
+            <result property="bankDesc" column="bank_desc" jdbcType="VARCHAR"/>
+            <result property="bankIcon" column="bank_icon" jdbcType="VARCHAR"/>
+            <result property="bankType" column="bank_type" jdbcType="TINYINT"/>
+            <result property="scoringStrategy" column="scoring_strategy" jdbcType="TINYINT"/>
+            <result property="reviewStatus" column="review_status" jdbcType="INTEGER"/>
+            <result property="reviewMessage" column="review_message" jdbcType="VARCHAR"/>
+            <result property="reviewerid" column="reviewerId" jdbcType="BIGINT"/>
+            <result property="reviewTime" column="review_time" jdbcType="TIMESTAMP"/>
+            <result property="userId" column="user_Id" jdbcType="BIGINT"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="isDelete" column="is_delete" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,bank_name,bank_desc,
+        bank_icon,bank_type,scoring_strategy,
+        review_status,review_message,reviewerId,
+        review_time,user_Id,create_time,
+        update_time,is_delete
+    </sql>
+</mapper>
