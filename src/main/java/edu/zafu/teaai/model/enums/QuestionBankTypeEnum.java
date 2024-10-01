@@ -9,23 +9,23 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * 题库评分策略枚举
+ * 题库类型枚举
  *
  * @author ColaBlack
  */
-@Getter
 @AllArgsConstructor
-public enum AppScoringStrategyEnum {
+@Getter
+public enum QuestionBankTypeEnum {
 
     /**
-     * 自定义评分策略
+     * 得分类题库
      */
-    CUSTOM("自定义", 0),
+    SCORE("得分类", 0),
 
     /**
-     * AI评分策略
+     * 测评类题库
      */
-    AI("AI", 1);
+    TEST("测评类", 1);
 
     private final String text;
 
@@ -37,11 +37,11 @@ public enum AppScoringStrategyEnum {
      * @param value 值
      * @return 枚举
      */
-    public static AppScoringStrategyEnum getEnumByValue(Integer value) {
+    public static QuestionBankTypeEnum getEnumByValue(Integer value) {
         if (ObjectUtil.isEmpty(value)) {
             return null;
         }
-        for (AppScoringStrategyEnum anEnum : AppScoringStrategyEnum.values()) {
+        for (QuestionBankTypeEnum anEnum : QuestionBankTypeEnum.values()) {
             if (anEnum.value == value) {
                 return anEnum;
             }

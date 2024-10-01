@@ -13,6 +13,11 @@ import java.io.Serializable;
 public class QuestionBankAddRequest implements Serializable {
 
     /**
+     * 题库ID
+     */
+    private Long id;
+
+    /**
      * 题库名称
      */
     private String bankName;

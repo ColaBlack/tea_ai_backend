@@ -28,7 +28,7 @@ public class QuestionQueryRequest extends PageRequest implements Serializable {
     /**
      * 题库 id
      */
-    private Long appId;
+    private Long questionBankId;
 
     /**
      * 创建用户 id
