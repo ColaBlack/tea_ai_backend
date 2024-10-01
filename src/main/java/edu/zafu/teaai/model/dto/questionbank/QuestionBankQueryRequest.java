@@ -1,28 +1,23 @@
-package edu.zafu.teaai.model.po;
+package edu.zafu.teaai.model.dto.questionbank;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import edu.zafu.teaai.common.PageRequest;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
- * 题库表
+ * 查询题库请求
  *
  * @author ColaBlack
- * @TableName question_bank
  */
-@TableName(value = "question_bank")
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class QuestionBank implements Serializable {
+public class QuestionBankQueryRequest extends PageRequest implements Serializable {
 
     /**
      * id
      */
-    @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
     /**
@@ -34,11 +29,6 @@ public class QuestionBank implements Serializable {
      * 题库描述
      */
     private String bankDesc;
-
-    /**
-     * 题库图标
-     */
-    private String bankIcon;
 
     /**
      * 题库类型（0-得分类，1-测评类）
@@ -66,30 +56,14 @@ public class QuestionBank implements Serializable {
     private Long reviewerid;
 
     /**
-     * 审核时间
-     */
-    private Date reviewTime;
-
-    /**
      * 创建用户 id
      */
     private Long userId;
 
     /**
-     * 创建时间
+     * 搜索词
      */
-    private Date createTime;
+    private String searchText;
 
-    /**
-     * 更新时间
-     */
-    private Date updateTime;
-
-    /**
-     * 是否删除
-     */
-    private Integer isDelete;
-
-    @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }

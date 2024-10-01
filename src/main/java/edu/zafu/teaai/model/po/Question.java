@@ -11,16 +11,17 @@ import java.util.Date;
 
 /**
  * 题目
+ *
  * @author ColaBlack
  * @TableName question
  */
-@TableName(value ="question")
+@TableName(value = "question")
 @Data
 public class Question implements Serializable {
     /**
      * id
      */
-    @TableId(type = IdType.AUTO)
+    @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
     /**

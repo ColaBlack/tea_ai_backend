@@ -1,27 +1,26 @@
-package edu.zafu.teaai.model.po;
+package edu.zafu.teaai.model.dto.scoringresult;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import edu.zafu.teaai.common.PageRequest;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
- * 评分结果
+ * 查询评分结果请求
+ *
  * @author ColaBlack
- * @TableName scoring_result
  */
-@TableName(value ="scoring_result")
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class ScoringResult implements Serializable {
+public class ScoringResultQueryRequest extends PageRequest implements Serializable {
 
     /**
      * id
      */
-    @TableId(type = IdType.ASSIGN_ID)
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**
@@ -33,11 +32,6 @@ public class ScoringResult implements Serializable {
      * 结果描述
      */
     private String resultDesc;
-
-    /**
-     * 结果图片
-     */
-    private String resultPicture;
 
     /**
      * 结果属性集合 JSON
@@ -60,20 +54,9 @@ public class ScoringResult implements Serializable {
     private Long userid;
 
     /**
-     * 创建时间
+     * 搜索词
      */
-    private Date createTime;
+    private String searchText;
 
-    /**
-     * 更新时间
-     */
-    private Date updateTime;
-
-    /**
-     * 是否删除
-     */
-    private Integer isDelete;
-
-    @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }

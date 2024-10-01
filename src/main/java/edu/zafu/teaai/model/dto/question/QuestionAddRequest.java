@@ -6,28 +6,22 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
-* 创建题目请求
-*
-* @author ColaBlack
-*/
+ * 创建题目请求
+ *
+ * @author ColaBlack
+ */
 @Data
 public class QuestionAddRequest implements Serializable {
 
-/**
-* 标题
-*/
-private String title;
+    /**
+     * 题目内容（json格式）
+     */
+    private List<QuestionContentDTO> questionContent;
 
-/**
-* 内容
-*/
-private String content;
-
-/**
-* 标签列表
-*/
-private List
-<String> tags;
+    /**
+     * 题库 id
+     */
+    private Long appId;
 
     private static final long serialVersionUID = 1L;
-    }
+}

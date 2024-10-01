@@ -1,28 +1,23 @@
-package edu.zafu.teaai.model.po;
+package edu.zafu.teaai.model.dto.useranswer;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import edu.zafu.teaai.common.PageRequest;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
- * 用户答题记录
+ * 查询用户答案请求
  *
  * @author ColaBlack
- * @TableName user_answer
  */
-@TableName(value = "user_answer")
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class UserAnswer implements Serializable {
+public class UserAnswerQueryRequest extends PageRequest implements Serializable {
 
     /**
      * id
      */
-    @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
     /**
@@ -48,7 +43,7 @@ public class UserAnswer implements Serializable {
     /**
      * 评分结果 id
      */
-    private Long resultid;
+    private Long resultId;
 
     /**
      * 结果名称
@@ -73,23 +68,12 @@ public class UserAnswer implements Serializable {
     /**
      * 用户 id
      */
-    private Long userid;
+    private Long userId;
 
     /**
-     * 创建时间
+     * 搜索词
      */
-    private Date createTime;
+    private String searchText;
 
-    /**
-     * 更新时间
-     */
-    private Date updateTime;
-
-    /**
-     * 是否删除
-     */
-    private Integer isDelete;
-
-    @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }

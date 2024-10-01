@@ -26,7 +26,7 @@ public class CodeGenerator {
         // 指定生成参数
         String packageName = "edu.zafu.teaai";
         String dataName = "用户答案";
-        String dataKey = "userAnswer";
+        String dataKey = "useranswer";
         String upperDataKey = "UserAnswer";
 
         // 封装生成参数
