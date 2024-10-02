@@ -16,7 +16,7 @@ public class ResultUtils {
      * @return 成功返回的结果
      */
     public static <T> BaseResponse<T> success(T data) {
-        return new BaseResponse<>(0, data, "ok");
+        return new BaseResponse<>(ErrorCode.SUCCESS.getCode(), data, "ok");
     }
 
     /**

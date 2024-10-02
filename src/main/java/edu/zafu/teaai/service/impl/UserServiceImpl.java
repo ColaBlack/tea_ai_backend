@@ -52,7 +52,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号由字母、数字组成，长度在4-20位之间");
         }
         if (!userPassword.matches(UserConstant.PASSWORD_REGEX) || !checkPassword.matches(UserConstant.PASSWORD_REGEX)) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "密码由字母、数字组成，长度在6-20位之间");
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "密码由字母、数字组成，长度在6-20位之间，但不能是纯数字或纯字母");
         }
         // 密码和校验密码相同
         if (!userPassword.equals(checkPassword)) {
