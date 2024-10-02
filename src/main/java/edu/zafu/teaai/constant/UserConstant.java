@@ -44,7 +44,7 @@ public interface UserConstant {
 
     /**
      * 账号正则表达式
-     * 账号由字母、数字，长度在4-20位之间
+     * 账号由字母、数字组成，长度在4-20位之间
      */
     String ACCOUNT_REGEX = "^[a-zA-Z0-9]{4,20}$";
 

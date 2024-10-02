@@ -111,6 +111,7 @@ public class UserController {
         if (userAddRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
+        ThrowUtils.throwIf(userAddRequest.getUserAccount() == null||userAddRequest.getUserAccount().isEmpty(), ErrorCode.PARAMS_ERROR, "账号不能为空");
         User user = new User();
         BeanUtils.copyProperties(userAddRequest, user);
         // 默认密码 ColaBlack123456
