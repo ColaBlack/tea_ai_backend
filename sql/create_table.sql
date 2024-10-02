@@ -5,7 +5,7 @@ use teaai;
 -- 用户表
 create table if not exists user
 (
-    user_id       bigint auto_increment comment 'id' primary key,
+    id       bigint auto_increment comment 'id' primary key,
     user_account  varchar(256)                           not null comment '账号',
     user_password varchar(512)                           not null comment '密码',
     user_name     varchar(256)                           null comment '用户昵称',
