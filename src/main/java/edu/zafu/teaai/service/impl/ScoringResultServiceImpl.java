@@ -72,7 +72,7 @@ public class ScoringResultServiceImpl extends ServiceImpl<ScoringResultMapper, S
         // 补充校验规则
         if (bankid != null) {
             QuestionBank questionBank = questionBankService.getById(bankid);
-            ThrowUtils.throwIf(questionBank == null, ErrorCode.PARAMS_ERROR, "应用不存在");
+            ThrowUtils.throwIf(questionBank == null, ErrorCode.PARAMS_ERROR, "题库不存在");
         }
     }
 
@@ -104,17 +104,17 @@ public class ScoringResultServiceImpl extends ServiceImpl<ScoringResultMapper, S
         // 从多字段中搜索
         if (StringUtils.isNotBlank(searchText)) {
             // 需要拼接查询条件
-            queryWrapper.and(qw -> qw.like("resultName", searchText).or().like("resultDesc", searchText));
+            queryWrapper.and(qw -> qw.like("result_name", searchText).or().like("resultDesc", searchText));
         }
         // 模糊查询
-        queryWrapper.like(StringUtils.isNotBlank(resultName), "resultName", resultName);
-        queryWrapper.like(StringUtils.isNotBlank(resultDesc), "resultDesc", resultDesc);
-        queryWrapper.like(StringUtils.isNotBlank(resultProp), "resultProp", resultProp);
+        queryWrapper.like(StringUtils.isNotBlank(resultName), "result_name", resultName);
+        queryWrapper.like(StringUtils.isNotBlank(resultDesc), "result_desc", resultDesc);
+        queryWrapper.like(StringUtils.isNotBlank(resultProp), "result_prop", resultProp);
         // 精确查询
         queryWrapper.eq(ObjectUtils.isNotEmpty(id), "id", id);
         queryWrapper.eq(ObjectUtils.isNotEmpty(userId), "userId", userId);
         queryWrapper.eq(ObjectUtils.isNotEmpty(bankid), "bankid", bankid);
-        queryWrapper.eq(ObjectUtils.isNotEmpty(resultScoreRange), "resultScoreRange", resultScoreRange);
+        queryWrapper.eq(ObjectUtils.isNotEmpty(resultScoreRange), "result_score_range", resultScoreRange);
         // 排序规则
         queryWrapper.orderBy(SqlUtils.validSortField(sortField), sortOrder.equals(CommonConstant.SORT_ORDER_ASC), sortField);
         return queryWrapper;

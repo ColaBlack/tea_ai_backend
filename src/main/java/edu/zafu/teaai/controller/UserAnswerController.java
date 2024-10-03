@@ -74,7 +74,7 @@ public class UserAnswerController {
         QuestionBank questionBank = questionBankService.getById(bankid);
         ThrowUtils.throwIf(questionBank == null, ErrorCode.NOT_FOUND_ERROR);
         if (!ReviewStatusEnum.PASS.equals(ReviewStatusEnum.getEnumByValue(questionBank.getReviewStatus()))) {
-            throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "应用未通过审核，无法答题");
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "题库未通过审核，无法答题");
         }
         // 填充默认值
         User loginUser = userService.getLoginUser(request);

@@ -57,6 +57,7 @@ public class QuestionController {
         BeanUtils.copyProperties(questionAddRequest, question);
         List<QuestionContentDTO> questionContentDTO = questionAddRequest.getQuestionContent();
         question.setQuestionContent(JSONUtil.toJsonStr(questionContentDTO));
+        question.setBankid(questionAddRequest.getQuestionBankId());
         // 数据校验
         questionService.validQuestion(question, true);
         // 填充默认值

@@ -113,19 +113,19 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
         // 从多字段中搜索
         if (StringUtils.isNotBlank(searchText)) {
             // 需要拼接查询条件
-            queryWrapper.and(qw -> qw.like("bankName", searchText).or().like("bankDesc", searchText));
+            queryWrapper.and(qw -> qw.like("bank_name", searchText).or().like("bankDesc", searchText));
         }
         // 模糊查询
-        queryWrapper.like(StringUtils.isNotBlank(bankName), "bankName", bankName);
-        queryWrapper.like(StringUtils.isNotBlank(bankDesc), "bankDesc", bankDesc);
-        queryWrapper.like(StringUtils.isNotBlank(reviewMessage), "reviewMessage", reviewMessage);
+        queryWrapper.like(StringUtils.isNotBlank(bankName), "bank_name", bankName);
+        queryWrapper.like(StringUtils.isNotBlank(bankDesc), "bank_desc", bankDesc);
+        queryWrapper.like(StringUtils.isNotBlank(reviewMessage), "review_message", reviewMessage);
         // 精确查询
         queryWrapper.eq(ObjectUtils.isNotEmpty(id), "id", id);
-        queryWrapper.eq(ObjectUtils.isNotEmpty(bankType), "bankType", bankType);
-        queryWrapper.eq(ObjectUtils.isNotEmpty(scoringStrategy), "scoringStrategy", scoringStrategy);
-        queryWrapper.eq(ObjectUtils.isNotEmpty(reviewStatus), "reviewStatus", reviewStatus);
+        queryWrapper.eq(ObjectUtils.isNotEmpty(bankType), "bank_type", bankType);
+        queryWrapper.eq(ObjectUtils.isNotEmpty(scoringStrategy), "scoring_strategy", scoringStrategy);
+        queryWrapper.eq(ObjectUtils.isNotEmpty(reviewStatus), "review_status", reviewStatus);
         queryWrapper.eq(ObjectUtils.isNotEmpty(reviewerId), "reviewerId", reviewerId);
-        queryWrapper.eq(ObjectUtils.isNotEmpty(userId), "userId", userId);
+        queryWrapper.eq(ObjectUtils.isNotEmpty(userId), "user_Id", userId);
         // 排序规则
         queryWrapper.orderBy(SqlUtils.validSortField(sortField),
                 sortOrder.equals(CommonConstant.SORT_ORDER_ASC),

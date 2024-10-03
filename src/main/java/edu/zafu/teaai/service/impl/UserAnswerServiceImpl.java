@@ -65,7 +65,7 @@ public class UserAnswerServiceImpl extends ServiceImpl<UserAnswerMapper, UserAns
         // 补充校验规则
         if (bankid != null) {
             QuestionBank questionBank = questionBankService.getById(bankid);
-            ThrowUtils.throwIf(questionBank == null, ErrorCode.PARAMS_ERROR, "应用不存在");
+            ThrowUtils.throwIf(questionBank == null, ErrorCode.PARAMS_ERROR, "题库不存在");
         }
     }
 
@@ -105,17 +105,17 @@ public class UserAnswerServiceImpl extends ServiceImpl<UserAnswerMapper, UserAns
         }
         // 模糊查询
         queryWrapper.like(StringUtils.isNotBlank(choices), "choices", choices);
-        queryWrapper.like(StringUtils.isNotBlank(resultName), "resultName", resultName);
-        queryWrapper.like(StringUtils.isNotBlank(resultDesc), "resultDesc", resultDesc);
-        queryWrapper.like(StringUtils.isNotBlank(resultPicture), "resultPicture", resultPicture);
+        queryWrapper.like(StringUtils.isNotBlank(resultName), "result_name", resultName);
+        queryWrapper.like(StringUtils.isNotBlank(resultDesc), "result_desc", resultDesc);
+        queryWrapper.like(StringUtils.isNotBlank(resultPicture), "result_oicture", resultPicture);
         // 精确查询
         queryWrapper.eq(ObjectUtils.isNotEmpty(id), "id", id);
         queryWrapper.eq(ObjectUtils.isNotEmpty(userId), "userId", userId);
         queryWrapper.eq(ObjectUtils.isNotEmpty(resultId), "resultId", resultId);
-        queryWrapper.eq(ObjectUtils.isNotEmpty(bankid), "bankid", bankid);
+        queryWrapper.eq(ObjectUtils.isNotEmpty(bankid), "bankID", bankid);
         queryWrapper.eq(ObjectUtils.isNotEmpty(bankType), "bankType", bankType);
-        queryWrapper.eq(ObjectUtils.isNotEmpty(resultScore), "resultScore", resultScore);
-        queryWrapper.eq(ObjectUtils.isNotEmpty(scoringStrategy), "scoringStrategy", scoringStrategy);
+        queryWrapper.eq(ObjectUtils.isNotEmpty(resultScore), "result_score", resultScore);
+        queryWrapper.eq(ObjectUtils.isNotEmpty(scoringStrategy), "scoring_strategy", scoringStrategy);
         // 排序规则
         queryWrapper.orderBy(SqlUtils.validSortField(sortField),
                 sortOrder.equals(CommonConstant.SORT_ORDER_ASC),

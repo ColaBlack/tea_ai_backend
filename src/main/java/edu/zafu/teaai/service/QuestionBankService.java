@@ -34,20 +34,20 @@ public interface QuestionBankService extends IService<QuestionBank> {
     QueryWrapper<QuestionBank> getQueryWrapper(QuestionBankQueryRequest questionBankQueryRequest);
 
     /**
-     * 获取应用封装
+     * 获取题库封装
      *
      * @param questionBank 待封装的数据
      * @param request      请求对象
-     * @return 应用封装
+     * @return 题库封装
      */
     QuestionBankVO getQuestionBankVO(QuestionBank questionBank, HttpServletRequest request);
 
     /**
-     * 分页获取应用封装
+     * 分页获取题库封装
      *
      * @param questionBankPage 分页对象
      * @param request          请求对象
-     * @return 分页应用封装
+     * @return 分页题库封装
      */
     Page<QuestionBankVO> getQuestionBankVOPage(Page<QuestionBank> questionBankPage, HttpServletRequest request);
 

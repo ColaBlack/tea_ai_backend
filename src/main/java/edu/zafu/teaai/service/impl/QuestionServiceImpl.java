@@ -67,7 +67,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
         // 补充校验规则
         if (bankid != null) {
             QuestionBank questionBank = questionBankService.getById(bankid);
-            ThrowUtils.throwIf(questionBank == null, ErrorCode.PARAMS_ERROR, "应用不存在");
+            ThrowUtils.throwIf(questionBank == null, ErrorCode.PARAMS_ERROR, "题库不存在");
         }
     }
 
@@ -93,10 +93,10 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
 
         // 补充需要的查询条件
         // 模糊查询
-        queryWrapper.like(StringUtils.isNotBlank(questionContent), "questionContent", questionContent);
+        queryWrapper.like(StringUtils.isNotBlank(questionContent), "question_content", questionContent);
         // 精确查询
         queryWrapper.eq(ObjectUtils.isNotEmpty(id), "id", id);
-        queryWrapper.eq(ObjectUtils.isNotEmpty(questionBankId), "questionBankId", questionBankId);
+        queryWrapper.eq(ObjectUtils.isNotEmpty(questionBankId), "bankId", questionBankId);
         queryWrapper.eq(ObjectUtils.isNotEmpty(userId), "userId", userId);
         // 排序规则
         queryWrapper.orderBy(SqlUtils.validSortField(sortField),
