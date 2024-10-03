@@ -21,7 +21,7 @@ public class QuestionAddRequest implements Serializable {
     /**
      * 题库 id
      */
-    private Long appId;
+    private Long questionBankId;
 
     private static final long serialVersionUID = 1L;
 }
