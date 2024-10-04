@@ -25,8 +25,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * 评分结果接口
@@ -59,8 +57,7 @@ public class ScoringResultController {
         // 在此处将实体类和 DTO 进行转换
         ScoringResult scoringResult = new ScoringResult();
         BeanUtils.copyProperties(scoringResultAddRequest, scoringResult);
-        List<String> resultProp = Collections.singletonList(scoringResultAddRequest.getResultProp());
-        scoringResult.setResultProp(JSONUtil.toJsonStr(resultProp));
+        scoringResult.setResultProp(JSONUtil.toJsonStr(scoringResultAddRequest.getResultProp()));
         // 数据校验
         scoringResultService.validScoringResult(scoringResult, true);
         // 填充默认值
@@ -116,8 +113,7 @@ public class ScoringResultController {
         // 在此处将实体类和 DTO 进行转换
         ScoringResult scoringResult = new ScoringResult();
         BeanUtils.copyProperties(scoringResultUpdateRequest, scoringResult);
-        List<String> resultProp = Collections.singletonList(scoringResultUpdateRequest.getResultProp());
-        scoringResult.setResultProp(JSONUtil.toJsonStr(resultProp));
+        scoringResult.setResultProp(JSONUtil.toJsonStr(scoringResultUpdateRequest.getResultProp()));
         // 数据校验
         scoringResultService.validScoringResult(scoringResult, false);
         // 判断是否存在
@@ -158,8 +154,7 @@ public class ScoringResultController {
         long current = scoringResultQueryRequest.getCurrent();
         long size = scoringResultQueryRequest.getPageSize();
         // 查询数据库
-        Page<ScoringResult> scoringResultPage = scoringResultService.page(new Page<>(current, size),
-                scoringResultService.getQueryWrapper(scoringResultQueryRequest));
+        Page<ScoringResult> scoringResultPage = scoringResultService.page(new Page<>(current, size), scoringResultService.getQueryWrapper(scoringResultQueryRequest));
         return ResultUtils.success(scoringResultPage);
     }
 
@@ -171,15 +166,13 @@ public class ScoringResultController {
      * @return 分页结果
      */
     @PostMapping("/list/page/vo")
-    public BaseResponse<Page<ScoringResultVO>> listScoringResultVOByPage(@RequestBody ScoringResultQueryRequest scoringResultQueryRequest,
-                                                                         HttpServletRequest request) {
+    public BaseResponse<Page<ScoringResultVO>> listScoringResultVOByPage(@RequestBody ScoringResultQueryRequest scoringResultQueryRequest, HttpServletRequest request) {
         long current = scoringResultQueryRequest.getCurrent();
         long size = scoringResultQueryRequest.getPageSize();
         // 限制爬虫
         ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
         // 查询数据库
-        Page<ScoringResult> scoringResultPage = scoringResultService.page(new Page<>(current, size),
-                scoringResultService.getQueryWrapper(scoringResultQueryRequest));
+        Page<ScoringResult> scoringResultPage = scoringResultService.page(new Page<>(current, size), scoringResultService.getQueryWrapper(scoringResultQueryRequest));
         // 获取封装类
         return ResultUtils.success(scoringResultService.getScoringResultVOPage(scoringResultPage, request));
     }
@@ -192,8 +185,7 @@ public class ScoringResultController {
      * @return 分页结果
      */
     @PostMapping("/my/list/page/vo")
-    public BaseResponse<Page<ScoringResultVO>> listMyScoringResultVOByPage(@RequestBody ScoringResultQueryRequest scoringResultQueryRequest,
-                                                                           HttpServletRequest request) {
+    public BaseResponse<Page<ScoringResultVO>> listMyScoringResultVOByPage(@RequestBody ScoringResultQueryRequest scoringResultQueryRequest, HttpServletRequest request) {
         ThrowUtils.throwIf(scoringResultQueryRequest == null, ErrorCode.PARAMS_ERROR);
         // 补充查询条件，只查询当前登录用户的数据
         User loginUser = userService.getLoginUser(request);
@@ -203,8 +195,7 @@ public class ScoringResultController {
         // 限制爬虫
         ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
         // 查询数据库
-        Page<ScoringResult> scoringResultPage = scoringResultService.page(new Page<>(current, size),
-                scoringResultService.getQueryWrapper(scoringResultQueryRequest));
+        Page<ScoringResult> scoringResultPage = scoringResultService.page(new Page<>(current, size), scoringResultService.getQueryWrapper(scoringResultQueryRequest));
         // 获取封装类
         return ResultUtils.success(scoringResultService.getScoringResultVOPage(scoringResultPage, request));
     }
@@ -224,8 +215,7 @@ public class ScoringResultController {
         // 在此处将实体类和 DTO 进行转换
         ScoringResult scoringResult = new ScoringResult();
         BeanUtils.copyProperties(scoringResultEditRequest, scoringResult);
-        List<String> resultProp = Collections.singletonList(scoringResultEditRequest.getResultProp());
-        scoringResult.setResultProp(JSONUtil.toJsonStr(resultProp));
+        scoringResult.setResultProp(JSONUtil.toJsonStr(scoringResultEditRequest.getResultProp()));
         // 数据校验
         scoringResultService.validScoringResult(scoringResult, false);
         User loginUser = userService.getLoginUser(request);

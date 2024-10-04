@@ -65,8 +65,7 @@ public class UserAnswerController {
         // 在此处将实体类和 DTO 进行转换
         UserAnswer userAnswer = new UserAnswer();
         BeanUtils.copyProperties(userAnswerAddRequest, userAnswer);
-        List<String> choices = Collections.singletonList(userAnswerAddRequest.getChoices());
-        userAnswer.setChoices(JSONUtil.toJsonStr(choices));
+        userAnswer.setChoices(JSONUtil.toJsonStr(userAnswerAddRequest.getChoices()));
         // 数据校验
         userAnswerService.validUserAnswer(userAnswer, true);
         // 判断 questionBank 是否存在

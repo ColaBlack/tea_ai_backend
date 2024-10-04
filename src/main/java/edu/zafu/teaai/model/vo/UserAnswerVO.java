@@ -24,12 +24,12 @@ public class UserAnswerVO implements Serializable {
     /**
      * 题库 id
      */
-    private Long appId;
+    private Long bankId;
 
     /**
      * 题库类型（0-得分类，1-测评类）
      */
-    private Integer appType;
+    private Integer bankType;
 
     /**
      * 评分策略（0-自定义，1-AI）
