@@ -1,10 +1,10 @@
 package edu.zafu.teaai.service;
 
-import javax.annotation.Resource;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import javax.annotation.Resource;
 
 /**
  * 用户服务测试

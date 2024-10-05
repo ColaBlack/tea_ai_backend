@@ -5,20 +5,20 @@
 <mapper namespace="edu.zafu.teaai.mapper.UserAnswerMapper">
 
     <resultMap id="BaseResultMap" type="edu.zafu.teaai.model.po.UserAnswer">
-            <id property="id" column="id" jdbcType="BIGINT"/>
-            <result property="bankid" column="bankId" jdbcType="BIGINT"/>
-            <result property="banktype" column="bankType" jdbcType="TINYINT"/>
-            <result property="scoringStrategy" column="scoring_strategy" jdbcType="TINYINT"/>
-            <result property="choices" column="choices" jdbcType="VARCHAR"/>
-            <result property="resultid" column="resultId" jdbcType="BIGINT"/>
-            <result property="resultName" column="result_name" jdbcType="VARCHAR"/>
-            <result property="resultDesc" column="result_desc" jdbcType="VARCHAR"/>
-            <result property="resultPicture" column="result_picture" jdbcType="VARCHAR"/>
-            <result property="resultScore" column="result_score" jdbcType="INTEGER"/>
-            <result property="userid" column="userId" jdbcType="BIGINT"/>
-            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
-            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
-            <result property="isDelete" column="is_delete" jdbcType="TINYINT"/>
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="bankid" column="bankId" jdbcType="BIGINT"/>
+        <result property="banktype" column="bankType" jdbcType="TINYINT"/>
+        <result property="scoringStrategy" column="scoring_strategy" jdbcType="TINYINT"/>
+        <result property="choices" column="choices" jdbcType="VARCHAR"/>
+        <result property="resultid" column="resultId" jdbcType="BIGINT"/>
+        <result property="resultName" column="result_name" jdbcType="VARCHAR"/>
+        <result property="resultDesc" column="result_desc" jdbcType="VARCHAR"/>
+        <result property="resultPicture" column="result_picture" jdbcType="VARCHAR"/>
+        <result property="resultScore" column="result_score" jdbcType="INTEGER"/>
+        <result property="userid" column="userId" jdbcType="BIGINT"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="isDelete" column="is_delete" jdbcType="TINYINT"/>
     </resultMap>
 
     <sql id="Base_Column_List">

@@ -14,13 +14,13 @@ import java.util.Map;
 
 /**
  * 代码生成器
+ *
  * @author ColaBlack
  */
 public class CodeGenerator {
 
     /**
      * 用法：修改生成参数和生成路径，注释掉不需要的生成逻辑，然后运行即可
-     *
      */
     public static void main(String[] args) throws TemplateException, IOException {
         // 指定生成参数

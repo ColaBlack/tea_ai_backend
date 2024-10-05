@@ -22,12 +22,11 @@ import java.util.concurrent.TimeUnit;
 @ScoringStrategyConfig(bankType = 1, scoringStrategy = 1)
 public class AiTestScoringStrategy implements ScoringStrategy {
 
-    @Resource
-    private AiService aiService;
-
     private final Cache<String, String> answerCacheMap = Caffeine.newBuilder().initialCapacity(1024)
             // 缓存有效期
             .expireAfterAccess(1L, TimeUnit.DAYS).build();
+    @Resource
+    private AiService aiService;
 
     @Override
     public UserAnswer doScore(List<String> choices, QuestionBank questionBank) throws Exception {

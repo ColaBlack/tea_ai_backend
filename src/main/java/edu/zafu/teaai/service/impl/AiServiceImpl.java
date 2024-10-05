@@ -37,10 +37,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class AiServiceImpl implements AiService {
 
     @Resource
-    private QuestionBankService questionBankService;
-
-    @Resource
     public QuestionService questionService;
+    @Resource
+    private QuestionBankService questionBankService;
 
     @Override
     public List<QuestionContentDTO> generateQuestion(AiGenerateQuestionRequest request) {

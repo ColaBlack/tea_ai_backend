@@ -1,10 +1,9 @@
 package edu.zafu.teaai.manager;
 
-import javax.annotation.Resource;
-
-import edu.zafu.teaai.manager.CosManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import javax.annotation.Resource;
 
 /**
  * Cos 操作测试

@@ -12,11 +12,7 @@ import java.io.Serializable;
 @Data
 public class AiGenerateQuestionRequest implements Serializable {
 
-    /**
-     * 题库id
-     */
-    private Long bankId;
-
+    private static final long serialVersionUID = 1L;
     /**
      * 生成的题目数
      */
@@ -26,6 +22,8 @@ public class AiGenerateQuestionRequest implements Serializable {
      * 每题的选项数
      */
     int optionNumber = 4;
-
-    private static final long serialVersionUID = 1L;
+    /**
+     * 题库id
+     */
+    private Long bankId;
 }

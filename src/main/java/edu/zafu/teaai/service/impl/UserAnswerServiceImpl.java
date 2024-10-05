@@ -72,7 +72,7 @@ public class UserAnswerServiceImpl extends ServiceImpl<UserAnswerMapper, UserAns
     /**
      * 获取查询条件
      *
-     * @param userAnswerQueryRequest     用户答案查询条件
+     * @param userAnswerQueryRequest 用户答案查询条件
      * @return 查询条件
      */
     @Override
@@ -155,7 +155,7 @@ public class UserAnswerServiceImpl extends ServiceImpl<UserAnswerMapper, UserAns
      *
      * @param userAnswerPage 用户答案分页对象
      * @param request        请求对象
-     * @return  用户答案分页封装
+     * @return 用户答案分页封装
      */
     @Override
     public Page<UserAnswerVO> getUserAnswerVOPage(Page<UserAnswer> userAnswerPage, HttpServletRequest request) {

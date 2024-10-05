@@ -12,20 +12,17 @@ import java.io.Serializable;
 @Data
 public class UserAnswerEditRequest implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     /**
      * id
      */
     private Long id;
-
     /**
      * 题库 id
      */
     private Long bankid;
-
     /**
      * 用户答案（JSON 数组）
      */
     private String choices;
-
-    private static final long serialVersionUID = 1L;
 }

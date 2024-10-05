@@ -37,7 +37,7 @@ public interface QuestionService extends IService<Question> {
      * 获取题目封装
      *
      * @param question 题目实体
-     * @param request 请求对象
+     * @param request  请求对象
      * @return 题目封装
      */
     QuestionVO getQuestionVO(Question question, HttpServletRequest request);
@@ -46,7 +46,7 @@ public interface QuestionService extends IService<Question> {
      * 分页获取题目封装
      *
      * @param questionPage 分页对象
-     * @param request 请求对象
+     * @param request      请求对象
      * @return 分页题目封装
      */
     Page<QuestionVO> getQuestionVOPage(Page<Question> questionPage, HttpServletRequest request);

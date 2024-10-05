@@ -26,7 +26,7 @@ public class CosManager {
     /**
      * 上传对象
      *
-     * @param key 唯一键
+     * @param key           唯一键
      * @param localFilePath 本地文件路径
      */
     public PutObjectResult putObject(String key, String localFilePath) {
@@ -38,7 +38,7 @@ public class CosManager {
     /**
      * 上传对象
      *
-     * @param key 唯一键
+     * @param key  唯一键
      * @param file 文件
      */
     public PutObjectResult putObject(String key, File file) {

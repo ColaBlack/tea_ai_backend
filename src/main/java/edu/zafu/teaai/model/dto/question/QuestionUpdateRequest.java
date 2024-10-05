@@ -13,15 +13,13 @@ import java.util.List;
 @Data
 public class QuestionUpdateRequest implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     /**
      * id
      */
     private Long id;
-
     /**
      * 题目内容（json格式）
      */
     private List<QuestionContentDTO> questionContent;
-
-    private static final long serialVersionUID = 1L;
 }
