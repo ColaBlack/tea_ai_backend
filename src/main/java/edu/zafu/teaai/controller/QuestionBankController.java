@@ -178,28 +178,28 @@ public class QuestionBankController {
         return ResultUtils.success(questionBankService.getQuestionBankVOPage(questionBankPage, request));
     }
 
-    /**
-     * 分页获取当前登录用户创建的题库列表
-     *
-     * @param questionBankQueryRequest 条件查询请求
-     * @param request                  请求
-     * @return 分页题库列表封装类
-     */
-    @PostMapping("/my/list/page/vo")
-    public BaseResponse<Page<QuestionBankVO>> listMyQuestionBankVOByPage(@RequestBody QuestionBankQueryRequest questionBankQueryRequest, HttpServletRequest request) {
-        ThrowUtils.throwIf(questionBankQueryRequest == null, ErrorCode.PARAMS_ERROR);
-        // 补充查询条件，只查询当前登录用户的数据
-        User loginUser = userService.getLoginUser(request);
-        questionBankQueryRequest.setUserId(loginUser.getId());
-        long current = questionBankQueryRequest.getCurrent();
-        long size = questionBankQueryRequest.getPageSize();
-        // 限制爬虫
-        ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
-        // 查询数据库
-        Page<QuestionBank> questionBankPage = questionBankService.page(new Page<>(current, size), questionBankService.getQueryWrapper(questionBankQueryRequest));
-        // 获取封装类
-        return ResultUtils.success(questionBankService.getQuestionBankVOPage(questionBankPage, request));
-    }
+//    /**
+//     * 分页获取当前登录用户创建的题库列表
+//     *
+//     * @param questionBankQueryRequest 条件查询请求
+//     * @param request                  请求
+//     * @return 分页题库列表封装类
+//     */
+//    @PostMapping("/my/list/page/vo")
+//    public BaseResponse<Page<QuestionBankVO>> listMyQuestionBankVOByPage(@RequestBody QuestionBankQueryRequest questionBankQueryRequest, HttpServletRequest request) {
+//        ThrowUtils.throwIf(questionBankQueryRequest == null, ErrorCode.PARAMS_ERROR);
+//        // 补充查询条件，只查询当前登录用户的数据
+//        User loginUser = userService.getLoginUser(request);
+//        questionBankQueryRequest.setUserId(loginUser.getId());
+//        long current = questionBankQueryRequest.getCurrent();
+//        long size = questionBankQueryRequest.getPageSize();
+//        // 限制爬虫
+//        ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
+//        // 查询数据库
+//        Page<QuestionBank> questionBankPage = questionBankService.page(new Page<>(current, size), questionBankService.getQueryWrapper(questionBankQueryRequest));
+//        // 获取封装类
+//        return ResultUtils.success(questionBankService.getQuestionBankVOPage(questionBankPage, request));
+//    }
 
     /**
      * 编辑题库（给用户使用）

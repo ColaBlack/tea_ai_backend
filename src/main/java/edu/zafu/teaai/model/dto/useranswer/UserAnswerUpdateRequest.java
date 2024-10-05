@@ -3,6 +3,7 @@ package edu.zafu.teaai.model.dto.useranswer;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 更新用户答案请求
@@ -25,7 +26,7 @@ public class UserAnswerUpdateRequest implements Serializable {
     /**
      * 用户答案（JSON 数组）
      */
-    private String choices;
+    private List<String> choices;
 
     private static final long serialVersionUID = 1L;
 }

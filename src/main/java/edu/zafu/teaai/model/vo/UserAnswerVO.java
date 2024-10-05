@@ -114,6 +114,8 @@ public class UserAnswerVO implements Serializable {
         }
         UserAnswerVO userAnswerVO = new UserAnswerVO();
         BeanUtils.copyProperties(userAnswer, userAnswerVO);
+        userAnswerVO.setBankId(userAnswer.getBankid());
+        userAnswerVO.setBankType(userAnswer.getBanktype());
         userAnswerVO.setChoices(JSONUtil.toList(userAnswer.getChoices(), String.class));
         return userAnswerVO;
     }

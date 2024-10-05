@@ -1,11 +1,11 @@
-package edu.zafu.teaai.model.dto.question;
+package edu.zafu.teaai.model.dto.ai;
 
 import lombok.Data;
 
 import java.io.Serializable;
 
 /**
- * AI 生成题目请求
+ * AI生成题目DTO
  *
  * @author ColaBlack
  */
@@ -18,14 +18,14 @@ public class AiGenerateQuestionRequest implements Serializable {
     private Long bankId;
 
     /**
-     * 生成题目数(默认10个)
+     * 生成的题目数
      */
-    int questionNumber = 10;
+    int questionNumber = 5;
 
     /**
-     * 选项数量(默认2个)
+     * 每题的选项数
      */
-    int optionNumber = 2;
+    int optionNumber = 4;
 
     private static final long serialVersionUID = 1L;
 }

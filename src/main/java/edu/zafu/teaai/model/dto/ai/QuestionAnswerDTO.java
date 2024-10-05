@@ -1,11 +1,11 @@
-package edu.zafu.teaai.model.dto.question;
+package edu.zafu.teaai.model.dto.ai;
 
 import lombok.Data;
 
 /**
- * 题目答案封装类（用于 AI 评分）
+ * 用户回答DTO
  *
-* @author ColaBlack
+ * @author ColaBlack
  */
 @Data
 public class QuestionAnswerDTO {
