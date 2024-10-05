@@ -1,5 +1,9 @@
 # teaai-backend
 
+**Read this in English: [English](README_en.md)**
+
+**想看中文文档请点击这里：[中文](README.md)**
+
 #### 介绍
 teaai后端项目
 是与前端项目[teaai-forntend](https://gitee.com/colablack/teaai-frontend)配套的后端项目
@@ -48,7 +52,7 @@ public interface AiConfig {
     /**
      * API key
      */
-    String API_KEY = "8163c658c9ad52ce1c02a602c43206ee.dlpJ8x2MSVa2hETP";
+    String API_KEY = "xxxxxx";
     //todo: 务必换成自己的API key
 
     /**
