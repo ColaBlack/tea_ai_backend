@@ -4,6 +4,8 @@
 
 **For English documentation, please click here: [English](README_en.md)**
 
+> This README document is translated from Chinese to English by chat-glm 4,and I haven't checked the correctness of the translation.Therefore,if there is any error in the translation, please let me know.
+
 #### Introduction
 The teaai backend project is a companion backend project for the frontend project [teaai-frontend](https://gitee.com/colablack/teaai-frontend).
 
