@@ -3,7 +3,7 @@ package edu.zafu.teaai.utils;
 import com.zhipu.oapi.ClientV4;
 import com.zhipu.oapi.Constants;
 import com.zhipu.oapi.service.v4.model.*;
-import edu.zafu.teaai.constant.apiKeyConstant;
+import edu.zafu.teaai.config.AiConfig;
 import io.reactivex.Flowable;
 
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ public class AiUtils {
     private static final String REQUEST_ID_TEMPLATE = "teaAI-request";
 
 
-    private static final ClientV4 CLIENT = new ClientV4.Builder(apiKeyConstant.API_KEY).build();
+    private static final ClientV4 CLIENT = new ClientV4.Builder(AiConfig.API_KEY).build();
 
     /**
      * 调用AI接口(同步)
@@ -35,7 +35,7 @@ public class AiUtils {
         ChatMessage chatMessage = new ChatMessage(ChatMessageRole.USER.value(), prompt);
         messages.add(chatMessage);
         String requestId = String.format(REQUEST_ID_TEMPLATE, System.currentTimeMillis());
-        ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder().model("glm-4-flash").stream(Boolean.FALSE).invokeMethod(Constants.invokeMethod).messages(messages).requestId(requestId).build();
+        ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder().model(AiConfig.MODEL_NAME).stream(Boolean.FALSE).invokeMethod(Constants.invokeMethod).messages(messages).requestId(requestId).build();
         ModelApiResponse invokeModelApiResp = CLIENT.invokeModelApi(chatCompletionRequest);
         return invokeModelApiResp.getData().getChoices().get(0).getMessage().getContent().toString();
     }
