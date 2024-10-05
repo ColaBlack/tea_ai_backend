@@ -190,7 +190,7 @@ public class UserAnswerController {
      *
      * @author ColaBlack
      */
-    @GetMapping("/my/list/page/vo")
+    @PostMapping("/my/list/page/vo")
     public BaseResponse<Page<UserAnswerVO>> listMyUserAnswerVOByPage(UserAnswerQueryRequest userAnswerQueryRequest, HttpServletRequest request) {
         ThrowUtils.throwIf(userAnswerQueryRequest == null, ErrorCode.PARAMS_ERROR);
         // 补充查询条件，只查询当前登录用户的数据

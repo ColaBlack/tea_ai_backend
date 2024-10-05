@@ -4,6 +4,7 @@ import edu.zafu.teaai.model.dto.ai.AiGenerateQuestionRequest;
 import edu.zafu.teaai.model.dto.question.QuestionContentDTO;
 import edu.zafu.teaai.model.po.QuestionBank;
 import edu.zafu.teaai.model.po.UserAnswer;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
 
@@ -15,15 +16,25 @@ import java.util.List;
 public interface AiService {
 
     /**
-     * 生成题目
+     * AI生成题目(同步)
+     *
      * @param request AI生成题目请求
      * @return 题目内容DTO列表
      */
     List<QuestionContentDTO> generateQuestion(AiGenerateQuestionRequest request);
 
     /**
+     * AI生成题目(SSE)
+     *
+     * @param request AI生成题目请求
+     * @return SSE Emitter
+     */
+    SseEmitter generateQuestionSSE(AiGenerateQuestionRequest request);
+
+    /**
      * AI判断答案
-     * @param choices 选项列表
+     *
+     * @param choices      选项列表
      * @param questionBank 题库
      * @return 用户答案
      * @throws Exception 异常
