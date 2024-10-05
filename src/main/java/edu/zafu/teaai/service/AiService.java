@@ -3,7 +3,6 @@ package edu.zafu.teaai.service;
 import edu.zafu.teaai.model.dto.ai.AiGenerateQuestionRequest;
 import edu.zafu.teaai.model.dto.question.QuestionContentDTO;
 import edu.zafu.teaai.model.po.QuestionBank;
-import edu.zafu.teaai.model.po.UserAnswer;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
@@ -36,8 +35,8 @@ public interface AiService {
      *
      * @param choices      选项列表
      * @param questionBank 题库
-     * @return 用户答案
+     * @return AI判题结果
      * @throws Exception 异常
      */
-    UserAnswer aiJudge(List<String> choices, QuestionBank questionBank) throws Exception;
+    String aiJudge(List<String> choices, QuestionBank questionBank) throws Exception;
 }

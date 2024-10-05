@@ -11,7 +11,6 @@ import edu.zafu.teaai.model.dto.question.QuestionContentDTO;
 import edu.zafu.teaai.model.enums.QuestionBankTypeEnum;
 import edu.zafu.teaai.model.po.Question;
 import edu.zafu.teaai.model.po.QuestionBank;
-import edu.zafu.teaai.model.po.UserAnswer;
 import edu.zafu.teaai.model.vo.QuestionVO;
 import edu.zafu.teaai.service.AiService;
 import edu.zafu.teaai.service.QuestionBankService;
@@ -84,43 +83,42 @@ public class AiServiceImpl implements AiService {
 
         StringBuilder contentBuilder = new StringBuilder();
         AtomicInteger flag = new AtomicInteger(0);
-        modelDataFlowable
-                .observeOn(Schedulers.io()).map(chunk -> chunk.getChoices().get(0).getDelta().getContent()).map(message -> message.replaceAll("\\s", "")).filter(StringUtils::isNotBlank).flatMap(message -> {
-                    // 将字符串转换为 List<Character>
-                    List<Character> charList = new ArrayList<>();
-                    for (char c : message.toCharArray()) {
-                        charList.add(c);
+        modelDataFlowable.observeOn(Schedulers.io()).map(chunk -> chunk.getChoices().get(0).getDelta().getContent()).map(message -> message.replaceAll("\\s", "")).filter(StringUtils::isNotBlank).flatMap(message -> {
+            // 将字符串转换为 List<Character>
+            List<Character> charList = new ArrayList<>();
+            for (char c : message.toCharArray()) {
+                charList.add(c);
+            }
+            return Flowable.fromIterable(charList);
+        }).doOnNext(c -> {
+            {
+                // 识别第一个 [ 表示开始 AI 传输 json 数据，打开 flag 开始拼接 json 数组
+                if (c == '{') {
+                    flag.addAndGet(1);
+                }
+                if (flag.get() > 0) {
+                    contentBuilder.append(c);
+                }
+                if (c == '}') {
+                    flag.addAndGet(-1);
+                    if (flag.get() == 0) {
+                        // 累积单套题目满足 json 格式后，sse 推送至前端
+                        // sse 需要压缩成当行 json，sse 无法识别换行
+                        emitter.send(JSONUtil.toJsonStr(contentBuilder.toString()));
+                        // 清空 StringBuilder
+                        contentBuilder.setLength(0);
                     }
-                    return Flowable.fromIterable(charList);
-                }).doOnNext(c -> {
-                    {
-                        // 识别第一个 [ 表示开始 AI 传输 json 数据，打开 flag 开始拼接 json 数组
-                        if (c == '{') {
-                            flag.addAndGet(1);
-                        }
-                        if (flag.get() > 0) {
-                            contentBuilder.append(c);
-                        }
-                        if (c == '}') {
-                            flag.addAndGet(-1);
-                            if (flag.get() == 0) {
-                                // 累积单套题目满足 json 格式后，sse 推送至前端
-                                // sse 需要压缩成当行 json，sse 无法识别换行
-                                emitter.send(JSONUtil.toJsonStr(contentBuilder.toString()));
-                                // 清空 StringBuilder
-                                contentBuilder.setLength(0);
-                            }
-                        }
-                    }
-                }).doOnComplete(emitter::complete).subscribe();
+                }
+            }
+        }).doOnComplete(emitter::complete).subscribe();
         return emitter;
     }
 
 
     @Override
-    public UserAnswer aiJudge(List<String> choices, QuestionBank questionBank) {
+    public String aiJudge(List<String> choices, QuestionBank questionBank) {
         Long bankId = questionBank.getId();
-        Question question = questionService.getOne(Wrappers.lambdaQuery(Question.class).eq(Question::getBankid, bankId));
+        Question question = questionService.getOne(Wrappers.lambdaQuery(Question.class).eq(Question::getBankid, bankId).orderByDesc(Question::getUpdateTime).last("LIMIT 1"));
         QuestionVO questionVO = QuestionVO.poToVo(question);
         List<QuestionContentDTO> questionContent = questionVO.getQuestionContent();
 
@@ -146,14 +144,7 @@ public class AiServiceImpl implements AiService {
         // 结果处理
         int start = ret.indexOf("{");
         int end = ret.lastIndexOf("}");
-        String json = ret.substring(start, end + 1);
+        return ret.substring(start, end + 1);
 
-        // 构造返回值，填充答案对象的属性
-        UserAnswer userAnswer = JSONUtil.toBean(json, UserAnswer.class);
-        userAnswer.setBankid(bankId);
-        userAnswer.setBanktype(questionBank.getBankType());
-        userAnswer.setScoringStrategy(questionBank.getScoringStrategy());
-        userAnswer.setChoices(JSONUtil.toJsonStr(choices));
-        return userAnswer;
     }
 }
