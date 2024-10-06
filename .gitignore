@@ -144,3 +144,6 @@ fabric.properties
 
 # AI 配置文件
 AiConfig.java
+
+#图床配置文件
+ImageBedConstant.java

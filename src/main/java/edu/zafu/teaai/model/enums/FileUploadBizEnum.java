@@ -20,7 +20,17 @@ public enum FileUploadBizEnum {
     /**
      * 用户头像上传
      */
-    USER_AVATAR("用户头像", "user_avatar");
+    USER_AVATAR("用户头像", "user_avatar"),
+
+    /**
+     * 题库图片上传
+     */
+    BANK_IMAGE("题库图片", "bank_image"),
+
+    /**
+     * 评分结果图片上传
+     */
+    RESULT_IMAGE("评分结果图片", "result_image");
 
     /**
      * 业务类型名称
