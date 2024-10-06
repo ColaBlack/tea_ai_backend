@@ -13,12 +13,12 @@ teaai后端项目
 - 使用spring boot进行项目开发
 - 使用mybatis和mybatis plus进行数据访问层开发
 - 出于后期可能的用户量激增问题，先使用了spring-session-data-redis实现分布式登录（由于此方案侵入性极低所以才提前使用）
-- 为了节省开发成本，使用了Hutool和apache commons-lang3以及lombok提高开发效率
+- 为了节省开发成本，使用了apache commons-lang3以及lombok提高开发效率
+- 使用Hutool工具箱发送请求到图床以实现上传的头像、题库、判题结果展示图等信息
 - 默认使用glm-4-flash大模型提供AI支持
 - 由于AI调用速度较慢，使用了RX java进行响应式编程，优化了前端用户等待AI响应的体验
 - 出于加速判题和节省Token的考虑，使用caffine对选项的判题结果进行了本地缓存
 - 由于glm-4-flash大模型自带限流等功能，所以暂时先不考虑在后端进行限流等操作，待后续有需求会补齐
-- 项目自带了腾讯云对象存储能力，可以用于存储用户上传的头像、题库、判题结果展示图等信息
 
 #### 安装教程
 
@@ -63,8 +63,28 @@ public interface AiConfig {
 
 ```
 
-5.运行sql/create_table.sql里的建表语句创建项目所需的表
-6.运行MainApplication启动项目
+5 .创建src/main/resources/images文件夹，用于存放临时上传的图片
+6.本项目默认将图片上传到图床中，为了保证我的图床的安全，我隐藏了我的AUTH_CODE,
+如果要正常使用，请建立src/main/java/edu/zafu/teaai/constant/ImageBedConstant.java
+内容如下
+```java
+package edu.zafu.teaai.constant;
+
+/**
+ * 图床上传文件需要的常量
+ *
+ * @author ColaBlack
+ */
+public class ImageBedConstant {
+    public static final String IMAGE_BED_URL = "你的图床地址";
+
+    public static final String IMAGE_BED_UPLOAD_URL = IMAGE_BED_URL + "/upload";
+
+    public static final String AUTH_CODE = "你的图床的AUTH_CODE";
+}
+```
+7.运行sql/create_table.sql里的建表语句创建项目所需的表
+8.运行MainApplication启动项目
 
 #### 使用说明
 

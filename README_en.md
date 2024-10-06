@@ -14,12 +14,12 @@ The teaai backend project is a companion backend project for the frontend projec
 - The project is developed using Spring Boot.
 - Data access layer development is done using MyBatis and MyBatis Plus.
 - To prepare for a possible surge in user numbers in the future, Spring-Session-Data-Redis is used to implement distributed login (this solution is chosen due to its low invasiveness).
-- To save on development costs, Hutool, Apache Commons Lang3, and Lombok are used to improve development efficiency.
+- To save on development costs, Apache Commons Lang3, and Lombok are used to improve development efficiency.
+- Hutool is used to To store user-uploaded avatars, question banks, and judging result display images, among other information.
 - By default, the GLM-4-Flash large model is used to provide AI support.
 - Since AI calls are slow, RX Java is used for reactive programming to optimize the user experience of waiting for AI responses on the frontend.
 - To speed up problem judging and save on tokens, Caffeine is used to locally cache the judging results of options.
 - Since the GLM-4-Flash large model has its own rate limiting and other functions, we currently do not consider implementing rate limiting on the backend. This will be addressed if there is a need in the future.
-- The project comes with Tencent Cloud object storage capabilities, which can be used to store user-uploaded avatars, question banks, and judging result display images, among other information.
 
 #### Installation Instructions
 
@@ -60,8 +60,27 @@ The teaai backend project is a companion backend project for the frontend projec
     }
     ```
 
-5. Run the SQL statements in sql/create_table.sql to create the tables required for the project.
-6. Run MainApplication to start the project.
+5.Create a folder named src/main/resources/images to store temporarily uploaded images.
+6.By default, this project uploads images to an image hosting service. To ensure the security of my image hosting, I have hidden my AUTH_CODE. If you want to use it normally, please create a file named src/main/java/edu/zafu/teaai/constant/ImageBedConstant.java with the following content:
+package edu.zafu.teaai.constant;
+```java
+package edu.zafu.teaai.constant;
+
+/**
+* Constants required for uploading files to the image hosting service
+*
+* @author ColaBlack
+  */
+  public class ImageBedConstant {
+  public static final String IMAGE_BED_URL = "Your image hosting address";
+
+  public static final String IMAGE_BED_UPLOAD_URL = IMAGE_BED_URL + "/upload";
+
+  public static final String AUTH_CODE = "Your image hosting AUTH_CODE";
+  }
+  ```
+7.Run the SQL statements in sql/create_table.sql to create the tables required for the project.
+8.Run MainApplication to start the project.
 
 #### Usage Instructions
 
