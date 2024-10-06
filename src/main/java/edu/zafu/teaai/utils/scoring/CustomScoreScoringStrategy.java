@@ -33,7 +33,10 @@ public class CustomScoreScoringStrategy implements ScoringStrategy {
     public UserAnswer doScore(List<String> choices, QuestionBank questionBank) {
         Long bankId = questionBank.getId();
         // 1. 根据 id 查询到题目和题目结果信息（按分数降序排序）
-        Question question = questionService.getOne(Wrappers.lambdaQuery(Question.class).eq(Question::getBankid, bankId));
+        Question question = questionService.getOne(Wrappers.lambdaQuery(Question.class)
+                .eq(Question::getBankid, bankId)
+                .orderByDesc(Question::getUpdateTime)
+                .last("LIMIT 1"));
         List<ScoringResult> scoringResultList = scoringResultService.list(Wrappers.lambdaQuery(ScoringResult.class).eq(ScoringResult::getBankid, bankId).orderByDesc(ScoringResult::getResultScoreRange));
 
         // 2. 统计用户的总得分

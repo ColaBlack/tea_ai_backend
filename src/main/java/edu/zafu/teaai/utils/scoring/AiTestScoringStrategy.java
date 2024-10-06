@@ -38,7 +38,7 @@ public class AiTestScoringStrategy implements ScoringStrategy {
         String json = answerCacheMap.getIfPresent(cacheKey);
         if (StringUtils.isEmpty(json)) {
             // 未命中缓存，调用AI接口进行评分并缓存结果
-            json = aiService.aiJudge(choices, questionBank);
+            json = aiService.aiJudgeTest(choices, questionBank);
             answerCacheMap.put(cacheKey, json);
         }
         UserAnswer userAnswer = JSONUtil.toBean(json, UserAnswer.class);

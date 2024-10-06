@@ -31,12 +31,23 @@ public interface AiService {
     SseEmitter generateQuestionSSE(AiGenerateQuestionRequest request);
 
     /**
-     * AI判断答案
+     * AI判断测评类答案
      *
      * @param choices      选项列表
      * @param questionBank 题库
      * @return AI判题结果
      * @throws Exception 异常
      */
-    String aiJudge(List<String> choices, QuestionBank questionBank) throws Exception;
+    String aiJudgeTest(List<String> choices, QuestionBank questionBank) throws Exception;
+
+    /**
+     * AI判断得分类答案
+     *
+     * @param score        得分
+     * @param questionBank 题库
+     * @return AI判题结果
+     * @throws Exception 异常
+     */
+    String aiJudgeScore(int score , QuestionBank questionBank) throws Exception;
+
 }

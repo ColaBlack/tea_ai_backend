@@ -1,20 +1,14 @@
 package edu.zafu.teaai.service.impl;
 
 import cn.hutool.json.JSONUtil;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.zhipu.oapi.service.v4.model.ModelData;
 import edu.zafu.teaai.common.ErrorCode;
 import edu.zafu.teaai.common.exception.ThrowUtils;
 import edu.zafu.teaai.model.dto.ai.AiGenerateQuestionRequest;
-import edu.zafu.teaai.model.dto.ai.QuestionAnswerDTO;
 import edu.zafu.teaai.model.dto.question.QuestionContentDTO;
-import edu.zafu.teaai.model.enums.QuestionBankTypeEnum;
-import edu.zafu.teaai.model.po.Question;
 import edu.zafu.teaai.model.po.QuestionBank;
-import edu.zafu.teaai.model.vo.QuestionVO;
 import edu.zafu.teaai.service.AiService;
 import edu.zafu.teaai.service.QuestionBankService;
-import edu.zafu.teaai.service.QuestionService;
 import edu.zafu.teaai.utils.AiUtils;
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
@@ -25,7 +19,6 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -37,21 +30,92 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class AiServiceImpl implements AiService {
 
     @Resource
-    public QuestionService questionService;
-    @Resource
     private QuestionBankService questionBankService;
 
     @Override
     public List<QuestionContentDTO> generateQuestion(AiGenerateQuestionRequest request) {
-        //生成用户prompt
+        //生成prompt
         Long bankId = request.getBankId();
         QuestionBank questionBank = questionBankService.getById(bankId);
         ThrowUtils.throwIf(questionBank == null, ErrorCode.PARAMS_ERROR, "题库不存在");
-        String userPrompt = questionBank.getBankName() + ",\n" + "【【【" + questionBank.getBankDesc() + "】】】, " + Objects.requireNonNull(QuestionBankTypeEnum.getEnumByValue(questionBank.getBankType())).getText() + ",\n" + request.getQuestionNumber() + ",\n" + request.getOptionNumber() + "\n";
+        //生成提示词
+        String prompt = "";
+        if (questionBank.getBankType() == 1) {
+            prompt = "\n" +
+                    "你是AI出题助手。按以下要求出题:\n" +
+                    "\n" +
+                    "1. 题库信息:\n" +
+                    "<题库名称>" + questionBank.getBankName() + "</题库名称>\n" +
+                    "<题库描述>" + questionBank.getBankDesc() + "</题库描述>\n" +
+                    "\n" +
+                    "2. 出题规则:\n" +
+                    "- 出" + request.getQuestionNumber() + "道题,每题" + request.getOptionNumber() + "个选项\n" +
+                    "- 题目和选项力求简洁\n" +
+                    "- 题目不加序号,不重复\n" +
+                    "\n" +
+                    "3. 输出格式:\n" +
+                    "```json\n" +
+                    "[\n" +
+                    "  {\n" +
+                    "    \"title\": \"题目\",\n" +
+                    "    \"options\": [\n" +
+                    "      {\"key\": \"A\", \"value\": \"选项内容\"},\n" +
+                    "      {\"key\": \"B\", \"value\": \"选项内容\"}\n" +
+                    "    ]\n" +
+                    "  }\n" +
+                    "]\n" +
+                    "```\n" +
+                    "\n" +
+                    "4. 检查:\n" +
+                    "- 确保题目无序号\n" +
+                    "- 核对题目数量和选项数量\n" +
+                    "\n" +
+                    "直接输出JSON,不要其他说明。\n";
+        }
+        if (questionBank.getBankType() == 0) {
+            prompt = "\n" +
+                    "你是一个高效的题目生成AI。使用以下输入创建测试题目：\n" +
+                    "\n" +
+                    "名称：" + questionBank.getBankName() + "\n" +
+                    "描述：" + questionBank.getBankDesc() + "\n" +
+                    "\n" +
+                    "生成要求：\n" +
+                    "1. 题目数量：" + request.getQuestionNumber() + "\n" +
+                    "2. 每题选项数：" + request.getOptionNumber() + "\n" +
+                    "3. 题目和选项须简洁\n" +
+                    "4. 题目不含序号\n" +
+                    "5. 题目不重复\n" +
+                    "6. 选项键值为大写字母（A、B、C...）\n" +
+                    "\n" +
+                    "输出格式：\n" +
+                    "```json\n" +
+                    "[\n" +
+                    "  {\n" +
+                    "    \"title\": \"题目文本\",\n" +
+                    "    \"options\": [\n" +
+                    "      {\n" +
+                    "        \"key\": \"A\",\n" +
+                    "        \"value\": \"选项内容\",\n" +
+                    "        \"score\": 分数\n" +
+                    "      },\n" +
+                    "      ...\n" +
+                    "    ]\n" +
+                    "  },\n" +
+                    "  ...\n" +
+                    "]\n" +
+                    "```\n" +
+                    "\n" +
+                    "注意事项：\n" +
+                    "- 确保输出为有效的JSON数组\n" +
+                    "- 分数应为整数\n" +
+                    "- 仔细检查并移除任何题目中的序号\n" +
+                    "\n" +
+                    "立即开始生成题目，无需其他说明。\n" +
+                    "\n";
+        }
 
         //调用AI接口
-        String systemPrompt = "你是一位严谨的出题专家，我会给你如下信息：\n" + "```\n" + "应用名称，\n" + "【【【应用描述】】】，\n" + "应用类别，\n" + "要生成的题目数，\n" + "每个题目的选项数\n" + "```\n" + "\n" + "请你根据上述信息，按照以下步骤来出题：\n" + "1. 要求：题目和选项尽可能地短，题目不要包含序号，每题的选项数以我提供的为主，题目不能重复\n" + "2. 严格按照下面的 json 格式输出题目和选项\n" + "```\n" + "[{\"options\":[{\"value\":\"选项内容\",\"key\":\"A\"},{\"value\":\"\",\"key\":\"B\"}],\"title\":\"题目标题\"}]\n" + "```\n" + "title 是题目，options 是选项，每个选项的 key 按照英文字母序（比如 A、B、C、D）以此类推，value 是选项内容\n" + "3. 检查题目是否包含序号，若包含序号则去除序号\n" + "4. 返回的题目列表格式必须为 JSON 数组\n";
-        String ret = AiUtils.aiCaller(systemPrompt + userPrompt);
+        String ret = AiUtils.aiCaller(prompt);
 
         //处理返回结果
         int startIndex = ret.indexOf("[");
@@ -68,13 +132,81 @@ public class AiServiceImpl implements AiService {
         // 获取应用信息
         QuestionBank questionBank = questionBankService.getById(bankId);
         ThrowUtils.throwIf(questionBank == null, ErrorCode.NOT_FOUND_ERROR, "题库不存在");
-
-        //生成用户prompt
-        String userPrompt = questionBank.getBankName() + ",\n" + "【【【" + questionBank.getBankDesc() + "】】】, " + Objects.requireNonNull(QuestionBankTypeEnum.getEnumByValue(questionBank.getBankType())).getText() + ",\n" + request.getQuestionNumber() + ",\n" + request.getOptionNumber() + "\n";
-        String systemPrompt = "你是一位严谨的出题专家，我会给你如下信息：\n" + "```\n" + "应用名称，\n" + "【【【应用描述】】】，\n" + "应用类别，\n" + "要生成的题目数，\n" + "每个题目的选项数\n" + "```\n" + "\n" + "请你根据上述信息，按照以下步骤来出题：\n" + "1. 要求：题目和选项尽可能地短，题目不要包含序号，每题的选项数以我提供的为主，题目不能重复\n" + "2. 严格按照下面的 json 格式输出题目和选项\n" + "```\n" + "[{\"options\":[{\"value\":\"选项内容\",\"key\":\"A\"},{\"value\":\"\",\"key\":\"B\"}],\"title\":\"题目标题\"}]\n" + "```\n" + "title 是题目，options 是选项，每个选项的 key 按照英文字母序（比如 A、B、C、D）以此类推，value 是选项内容\n" + "3. 检查题目是否包含序号，若包含序号则去除序号\n" + "4. 返回的题目列表格式必须为 JSON 数组\n";
-
-        String prompt = systemPrompt + userPrompt;
-
+        String prompt = "";
+        //生成提示词
+        if (questionBank.getBankType() == 1) {
+            prompt = "\n" +
+                    "你是AI出题助手。按以下要求出题:\n" +
+                    "\n" +
+                    "1. 题库信息:\n" +
+                    "<题库名称>" + questionBank.getBankName() + "</题库名称>\n" +
+                    "<题库描述>" + questionBank.getBankDesc() + "</题库描述>\n" +
+                    "\n" +
+                    "2. 出题规则:\n" +
+                    "- 出" + request.getQuestionNumber() + "道题,每题" + request.getOptionNumber() + "个选项\n" +
+                    "- 题目和选项力求简洁\n" +
+                    "- 题目不加序号,不重复\n" +
+                    "\n" +
+                    "3. 输出格式:\n" +
+                    "```json\n" +
+                    "[\n" +
+                    "  {\n" +
+                    "    \"title\": \"题目\",\n" +
+                    "    \"options\": [\n" +
+                    "      {\"key\": \"A\", \"value\": \"选项内容\"},\n" +
+                    "      {\"key\": \"B\", \"value\": \"选项内容\"}\n" +
+                    "    ]\n" +
+                    "  }\n" +
+                    "]\n" +
+                    "```\n" +
+                    "\n" +
+                    "4. 检查:\n" +
+                    "- 确保题目无序号\n" +
+                    "- 核对题目数量和选项数量\n" +
+                    "\n" +
+                    "直接输出JSON,不要其他说明。\n";
+        }
+        if (questionBank.getBankType() == 0) {
+            prompt = "\n" +
+                    "你是一个高效的题目生成AI。使用以下输入创建测试题目：\n" +
+                    "\n" +
+                    "名称：" + questionBank.getBankName() + "\n" +
+                    "描述：" + questionBank.getBankDesc() + "\n" +
+                    "\n" +
+                    "生成要求：\n" +
+                    "1. 题目数量：" + request.getQuestionNumber() + "\n" +
+                    "2. 每题选项数：" + request.getOptionNumber() + "\n" +
+                    "3. 题目和选项须简洁\n" +
+                    "4. 题目不含序号\n" +
+                    "5. 题目不重复\n" +
+                    "6. 选项键值为大写字母（A、B、C...）\n" +
+                    "\n" +
+                    "输出格式：\n" +
+                    "```json\n" +
+                    "[\n" +
+                    "  {\n" +
+                    "    \"title\": \"题目文本\",\n" +
+                    "    \"options\": [\n" +
+                    "      {\n" +
+                    "        \"key\": \"A\",\n" +
+                    "        \"value\": \"选项内容\",\n" +
+                    "        \"score\": 分数\n" +
+                    "      },\n" +
+                    "      ...\n" +
+                    "    ]\n" +
+                    "  },\n" +
+                    "  ...\n" +
+                    "]\n" +
+                    "```\n" +
+                    "\n" +
+                    "注意事项：\n" +
+                    "- 确保输出为有效的JSON数组\n" +
+                    "- 分数应为整数\n" +
+                    "- 仔细检查并移除任何题目中的序号\n" +
+                    "\n" +
+                    "立即开始生成题目，无需其他说明。\n" +
+                    "\n";
+        }
         // 建立 SSE 连接对象，0 表示不超时
         SseEmitter emitter = new SseEmitter(0L);
         // AI 生成，sse 流式返回
@@ -115,28 +247,38 @@ public class AiServiceImpl implements AiService {
 
 
     @Override
-    public String aiJudge(List<String> choices, QuestionBank questionBank) {
-        Long bankId = questionBank.getId();
-        Question question = questionService.getOne(Wrappers.lambdaQuery(Question.class).eq(Question::getBankid, bankId).orderByDesc(Question::getUpdateTime).last("LIMIT 1"));
-        QuestionVO questionVO = QuestionVO.poToVo(question);
-        List<QuestionContentDTO> questionContent = questionVO.getQuestionContent();
-
+    public String aiJudgeTest(List<String> choices, QuestionBank questionBank) {
         // 构造提示词
-        StringBuilder userPrompt = new StringBuilder();
-        userPrompt.append(questionBank.getBankName()).append("\n");
-        userPrompt.append(questionBank.getBankDesc()).append("\n");
-        List<QuestionAnswerDTO> questionAnswerDTOList = new ArrayList<>();
-        for (int i = 0; i < questionContent.size(); i++) {
-            QuestionAnswerDTO questionAnswerDTO = new QuestionAnswerDTO();
-            questionAnswerDTO.setTitle(questionContent.get(i).getTitle());
-            questionAnswerDTO.setUserAnswer(choices.get(i));
-            questionAnswerDTOList.add(questionAnswerDTO);
-        }
-        userPrompt.append(JSONUtil.toJsonStr(questionAnswerDTOList));
-
-        String systemPrompt = "你是一位严谨的判题专家，我会给你如下信息：\n" + "```\n" + "应用名称，\n" + "【【【应用描述】】】，\n" + "题目和用户回答的列表：格式为 [{\"title\": \"题目\",\"answer\": \"用户回答\"}]\n" + "```\n" + "\n" + "请你根据上述信息，按照以下步骤来对用户进行评价：\n" + "1. 要求：需要给出一个明确的评价结果，包括评价名称（尽量简短）和评价描述（尽量详细，大于 200 字）\n" + "2. 严格按照下面的 json 格式输出评价名称和评价描述\n" + "```\n" + "{\"resultName\": \"评价名称\", \"resultDesc\": \"评价描述\"}\n" + "```\n" + "3. 返回格式必须为 JSON 对象";
-
-        String prompt = systemPrompt + userPrompt;
+        String prompt = "\n" +
+                "作为一名经验丰富的判题专家，请你根据以下信息对答题者的表现进行全面分析：\n" +
+                "\n" +
+                "输入信息：\n" +
+                "1. 题库名称：" + questionBank.getBankName() + "\n" +
+                "2. 题库描述：\n" +
+                questionBank.getBankDesc() + "\n" +
+                "3. 答题记录：\n" +
+                choices.toString() + "\n" +
+                "评估步骤：\n" +
+                "1. 仔细研读题库描述和答题者的答题记录。\n" +
+                "2. 分析答题者对题目的理解程度和答题准确性。\n" +
+                "3. 总结答题者的强项和需要改进的地方。\n" +
+                "4. 给出一个简明扼要的评价标题（不超过10个字）和一段详细的评价说明（至少200字）。\n" +
+                "\n" +
+                "请将你的评估结果按以下JSON格式输出：\n" +
+                "\n" +
+                "<output_format>\n" +
+                "{\n" +
+                "  \"resultName\": \"评价标题\",\n" +
+                "  \"resultDesc\": \"评价说明\"\n" +
+                "}\n" +
+                "</output_format>\n" +
+                "\n" +
+                "评估注意事项：\n" +
+                "1. 评价要客观公正，基于答题者的实际答题表现。\n" +
+                "2. 评价说明应当具体详实，包括答题者的知识掌握情况、解题策略和潜在的学习方向。\n" +
+                "3. 避免使用空泛或模糊的表述，尽量提供有针对性的反馈。\n" +
+                "4. 如果可能，建议包含一些鼓励性的内容，以激发答题者的学习积极性。\n" +
+                "\n";
         // 调用 AI 接口
         String ret = AiUtils.aiCaller(prompt);
 
@@ -145,5 +287,39 @@ public class AiServiceImpl implements AiService {
         int end = ret.lastIndexOf("}");
         return ret.substring(start, end + 1);
 
+    }
+
+    @Override
+    public String aiJudgeScore(int score, QuestionBank questionBank) throws Exception {
+        String prompt = "\n" +
+                "你是一个高效的AI评估系统。使用以下数据进行分析：\n" +
+                "\n" +
+                "题库：" + questionBank.getBankName() + "\n" +
+                "描述：" + questionBank.getBankDesc() + "\n" +
+                "得分：" + score + "\n" +
+                "\n" +
+                "任务：\n" +
+                "1. 分析答题表现\n" +
+                "2. 生成10字以内标题\n" +
+                "3. 撰写200字以上详细评价\n" +
+                "\n" +
+                "以JSON格式输出：\n" +
+                "\n" +
+                "<output_format>\n" +
+                "{\n" +
+                "  \"resultName\": \"简短评价标题\",\n" +
+                "  \"resultDesc\": \"详细分析内容\"\n" +
+                "}\n" +
+                "</output_format>\n" +
+                "\n" +
+                "注意：评价应客观、具体，并包含改进建议。\n";
+
+        // 调用 AI 接口
+        String ret = AiUtils.aiCaller(prompt);
+
+        // 结果处理
+        int start = ret.indexOf("{");
+        int end = ret.lastIndexOf("}");
+        return ret.substring(start, end + 1);
     }
 }
