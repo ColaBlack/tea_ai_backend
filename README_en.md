@@ -86,10 +86,8 @@ package edu.zafu.teaai.constant;
 
 1. Since the object storage you use may not be Tencent Cloud, or you might want to store files in a personal image hosting service (like me) or locally, the code for calling Tencent Cloud object storage is not complete and can be deleted. You can also complete it as needed.
     - The code related to this is in:
-        - src/main/java/edu/zafu/teaai/config/CosClientConfig.java
         - src/main/java/edu/zafu/teaai/constant/FileConstant.java
         - src/main/java/edu/zafu/teaai/controller/FileController.java
-        - src/main/java/edu/zafu/teaai/manager/CosManager.java
 
 2. There is a lot of commented interface code in the code. Those interfaces are reserved for the frontend during backend development but were ultimately not used, so they are closed with comments.
 

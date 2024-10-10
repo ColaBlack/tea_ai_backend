@@ -90,10 +90,8 @@ public class ImageBedConstant {
 
 1.  由于你使用的对象存储未必是腾讯云，甚至有可能想把文件存在个人的图床（就是我）或本地，所以调用腾讯云对象存储的代码并不完全，也可以删除需要则自己补全
 其中
-- src/main/java/edu/zafu/teaai/config/CosClientConfig.java
 - src/main/java/edu/zafu/teaai/constant/FileConstant.java
 - src/main/java/edu/zafu/teaai/controller/FileController.java
-- src/main/java/edu/zafu/teaai/manager/CosManager.java
 的代码均与之相关
 
 2. 代码中存在很多被注释的接口，那些接口代码是后端开发时为前端预留的接口，但最终并没有使用所以通过注释的方式关闭了
