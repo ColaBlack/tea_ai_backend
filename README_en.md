@@ -15,7 +15,7 @@ The teaai backend project is a companion backend project for the frontend projec
 - Data access layer development is done using MyBatis and MyBatis Plus.
 - To prepare for a possible surge in user numbers in the future, Spring-Session-Data-Redis is used to implement distributed login (this solution is chosen due to its low invasiveness).
 - To save on development costs, Apache Commons Lang3, and Lombok are used to improve development efficiency.
-- Hutool is used to To store user-uploaded avatars, question banks, and judging result display images, among other information.
+- Hu-tool is used to To store user-uploaded avatars, question banks, and judging result display images, among other information.
 - By default, the GLM-4-Flash large model is used to provide AI support.
 - Since AI calls are slow, RX Java is used for reactive programming to optimize the user experience of waiting for AI responses on the frontend.
 - To speed up problem judging and save on tokens, Caffeine is used to locally cache the judging results of options.
@@ -33,54 +33,53 @@ The teaai backend project is a companion backend project for the frontend projec
     - MySQL or other relational database drivers, addresses, accounts, and passwords.
     - Redis address, account, and password.
     - Tencent Cloud or other object storage configuration information.
-4. To avoid accidentally open-sourcing the AI API_KEY during development, it is gitignored. To run the project smoothly, please create a new Java interface `AiConfig.java` in the folder:
-   > src/main/java/edu/zafu/teaai/config
+4. Modify the configuration information in application.yml, such as:
+   the configuration of the database,
 
-   Content as follows:
-    ```java
-    package edu.zafu.teaai.config;
+```yaml
+  # 数据库配置
+  datasource:
+    # todo 需替换配置
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/teaai
+    username: root
+    password: 123456
+  # Redis 配置
+  redis:
+    # todo 需替换配置
+    database: 1
+    host: localhost
+    port: 6379
+    timeout: 5000
+```
 
-    /**
-     * AI configuration information
-     *
-     * @author ColaBlack
-     */
-    public interface AiConfig {
+AI configuration,
 
-        /**
-         * API key
-         */
-        String API_KEY = "xxxxxx";
-        //todo: Make sure to replace it with your own API key
+```yaml
+# ai配置
+# todo 需替换配置
+ai:
+  api:
+    key: 123456 # 需替换
+  model:
+    name: "glm-4-flash" # 需替换
+```
 
-        /**
-         * Model name
-         */
-        String MODEL_NAME = "glm-4-flash";
-    }
-    ```
+and image bed configuration.
+
+```yaml
+# 图床配置
+# todo 需替换配置
+image:
+  bed:
+    url: host
+    uploadUrl: host/upload
+    authCode: authCode
+```
 
 5.Create a folder named src/main/resources/images to store temporarily uploaded images.
-6.By default, this project uploads images to an image hosting service. To ensure the security of my image hosting, I have hidden my AUTH_CODE. If you want to use it normally, please create a file named src/main/java/edu/zafu/teaai/constant/ImageBedConstant.java with the following content:
-package edu.zafu.teaai.constant;
-```java
-package edu.zafu.teaai.constant;
-
-/**
-* Constants required for uploading files to the image hosting service
-*
-* @author ColaBlack
-  */
-  public class ImageBedConstant {
-  public static final String IMAGE_BED_URL = "Your image hosting address";
-
-  public static final String IMAGE_BED_UPLOAD_URL = IMAGE_BED_URL + "/upload";
-
-  public static final String AUTH_CODE = "Your image hosting AUTH_CODE";
-  }
-  ```
-7.Run the SQL statements in sql/create_table.sql to create the tables required for the project.
-8.Run MainApplication to start the project.
+6.Run the SQL statements in sql/create_table.sql to create the tables required for the project.
+7.Run MainApplication to start the project.
 
 #### Usage Instructions
 

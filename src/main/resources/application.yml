@@ -64,3 +64,18 @@ knife4j:
         api-rule: package
         api-rule-resources:
           - edu.zafu.teaai.controller
+
+# ai配置
+# todo 需替换配置
+ai:
+  api:
+    key: 123456 # 需替换
+  model:
+    name: "glm-4-flash" # 需替换
+# 图床配置
+# todo 需替换配置
+image:
+  bed:
+    url: host
+    uploadUrl: host/upload
+    authCode: authCode
