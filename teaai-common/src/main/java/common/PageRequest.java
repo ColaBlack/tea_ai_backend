@@ -1,6 +1,7 @@
 package common;
 
-import edu.zafu.teaai.constant.CommonConstant;
+
+import constant.CommonConstant;
 import lombok.Data;
 
 /**
