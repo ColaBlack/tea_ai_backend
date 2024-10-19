@@ -1,0 +1,287 @@
+package controller;
+
+
+import annotation.AuthCheck;
+import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import common.BaseResponse;
+import common.DeleteRequest;
+import common.ErrorCode;
+import common.ResultUtils;
+import common.exception.BusinessException;
+import common.exception.ThrowUtils;
+import constant.UserConstant;
+import lombok.extern.slf4j.Slf4j;
+import model.dto.useranswer.UserAnswerAddRequest;
+import model.dto.useranswer.UserAnswerQueryRequest;
+import model.dto.useranswer.UserAnswerUpdateRequest;
+import model.enums.ReviewStatusEnum;
+import model.po.QuestionBank;
+import model.po.User;
+import model.po.UserAnswer;
+import model.vo.UserAnswerVO;
+import org.springframework.beans.BeanUtils;
+import org.springframework.web.bind.annotation.*;
+import scoring.ScoringStrategyExecutor;
+import service.QuestionBankService;
+import service.UserAnswerService;
+import service.UserService;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+
+/**
+ * 用户答案接口
+ *
+ * @author ColaBlack
+ */
+@RestController
+@RequestMapping("/userAnswer")
+@Slf4j
+public class UserAnswerController {
+
+    @Resource
+    private UserAnswerService userAnswerService;
+
+    @Resource
+    private QuestionBankService questionBankService;
+
+    @Resource
+    private UserService userService;
+
+    @Resource
+    private ScoringStrategyExecutor scoringStrategyExecutor;
+
+    // region 增删改查
+
+    /**
+     * 创建用户答案
+     *
+     * @param userAnswerAddRequest 用户答案创建请求
+     * @param request              请求对象
+     * @return 新写入数据的 id
+     */
+    @PostMapping("/add")
+    public BaseResponse<Long> addUserAnswer(@RequestBody UserAnswerAddRequest userAnswerAddRequest, HttpServletRequest request) {
+        ThrowUtils.throwIf(userAnswerAddRequest == null, ErrorCode.PARAMS_ERROR);
+        // 在此处将实体类和 DTO 进行转换
+        UserAnswer userAnswer = new UserAnswer();
+        BeanUtils.copyProperties(userAnswerAddRequest, userAnswer);
+        userAnswer.setChoices(JSONUtil.toJsonStr(userAnswerAddRequest.getChoices()));
+        // 数据校验
+        userAnswerService.validUserAnswer(userAnswer, true);
+        // 判断 questionBank 是否存在
+        Long bankid = userAnswerAddRequest.getBankid();
+        QuestionBank questionBank = questionBankService.getById(bankid);
+        ThrowUtils.throwIf(questionBank == null, ErrorCode.NOT_FOUND_ERROR);
+        if (!ReviewStatusEnum.PASS.equals(ReviewStatusEnum.getEnumByValue(questionBank.getReviewStatus()))) {
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "题库未通过审核，无法答题");
+        }
+        // 填充默认值
+        User loginUser = userService.getLoginUser(request);
+        userAnswer.setUserid(loginUser.getId());
+        // 写入数据库
+        boolean result = userAnswerService.save(userAnswer);
+        ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
+        // 返回新写入的数据 id
+        long newUserAnswerId = userAnswer.getId();
+        // 调用评分模块
+        try {
+            UserAnswer userAnswerWithResult = scoringStrategyExecutor.doScore(userAnswerAddRequest.getChoices(), questionBank);
+            userAnswerWithResult.setId(newUserAnswerId);
+            userAnswerWithResult.setBankid(null);
+            userAnswerService.updateById(userAnswerWithResult);
+        } catch (Exception e) {
+            log.error("评分错误", e);
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "评分错误");
+        }
+        return ResultUtils.success(newUserAnswerId);
+    }
+
+    /**
+     * 删除用户答案
+     *
+     * @param deleteRequest 删除请求
+     * @param request       请求对象
+     * @return 操作结果
+     */
+    @PostMapping("/delete")
+    public BaseResponse<Boolean> deleteUserAnswer(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
+        if (deleteRequest == null || deleteRequest.getId() <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        User user = userService.getLoginUser(request);
+        long id = deleteRequest.getId();
+        // 判断是否存在
+        UserAnswer oldUserAnswer = userAnswerService.getById(id);
+        ThrowUtils.throwIf(oldUserAnswer == null, ErrorCode.NOT_FOUND_ERROR);
+        // 仅本人或管理员可删除
+        if (!oldUserAnswer.getUserid().equals(user.getId()) && !userService.isAdmin(request)) {
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
+        }
+        // 操作数据库
+        boolean result = userAnswerService.removeById(id);
+        ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
+        return ResultUtils.success(true);
+    }
+
+    /**
+     * 更新用户答案（仅管理员可用）
+     *
+     * @param userAnswerUpdateRequest 用户答案更新请求
+     * @return 操作结果
+     */
+    @PostMapping("/update")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    public BaseResponse<Boolean> updateUserAnswer(@RequestBody UserAnswerUpdateRequest userAnswerUpdateRequest) {
+        if (userAnswerUpdateRequest == null || userAnswerUpdateRequest.getId() <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        // 在此处将实体类和 DTO 进行转换
+        UserAnswer userAnswer = new UserAnswer();
+        BeanUtils.copyProperties(userAnswerUpdateRequest, userAnswer);
+        userAnswer.setChoices(JSONUtil.toJsonStr(userAnswerUpdateRequest.getChoices()));
+        // 数据校验
+        userAnswerService.validUserAnswer(userAnswer, false);
+        // 判断是否存在
+        long id = userAnswerUpdateRequest.getId();
+        UserAnswer oldUserAnswer = userAnswerService.getById(id);
+        ThrowUtils.throwIf(oldUserAnswer == null, ErrorCode.NOT_FOUND_ERROR);
+        // 操作数据库
+        boolean result = userAnswerService.updateById(userAnswer);
+        ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
+        return ResultUtils.success(true);
+    }
+
+    /**
+     * 根据 id 获取用户答案（封装类）
+     *
+     * @param id      用户答案 id
+     * @param request 请求对象
+     * @return 用户答案封装类
+     */
+    @GetMapping("/get/vo")
+    public BaseResponse<UserAnswerVO> getUserAnswerVOById(long id, HttpServletRequest request) {
+        ThrowUtils.throwIf(id <= 0, ErrorCode.PARAMS_ERROR);
+        // 查询数据库
+        UserAnswer userAnswer = userAnswerService.getById(id);
+        ThrowUtils.throwIf(userAnswer == null, ErrorCode.NOT_FOUND_ERROR);
+        // 获取封装类
+        return ResultUtils.success(userAnswerService.getUserAnswerVO(userAnswer, request));
+    }
+
+    /**
+     * 分页获取用户答案列表（仅管理员可用）
+     *
+     * @param userAnswerQueryRequest 用户答案查询请求
+     * @return 用户答案分页列表
+     */
+    @PostMapping("/list/page")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    public BaseResponse<Page<UserAnswer>> listUserAnswerByPage(@RequestBody UserAnswerQueryRequest userAnswerQueryRequest) {
+        long current = userAnswerQueryRequest.getCurrent();
+        long size = userAnswerQueryRequest.getPageSize();
+        // 查询数据库
+        Page<UserAnswer> userAnswerPage = userAnswerService.page(new Page<>(current, size), userAnswerService.getQueryWrapper(userAnswerQueryRequest));
+        return ResultUtils.success(userAnswerPage);
+    }
+
+    /**
+     * 分页获取当前登录用户创建的用户答案列表（封装类）
+     *
+     * @author ColaBlack
+     */
+    @PostMapping("/my/list/page/vo")
+    public BaseResponse<Page<UserAnswerVO>> listMyUserAnswerVOByPage(UserAnswerQueryRequest userAnswerQueryRequest, HttpServletRequest request) {
+        ThrowUtils.throwIf(userAnswerQueryRequest == null, ErrorCode.PARAMS_ERROR);
+        // 补充查询条件，只查询当前登录用户的数据
+        User loginUser = userService.getLoginUser(request);
+        userAnswerQueryRequest.setUserId(loginUser.getId());
+        long current = userAnswerQueryRequest.getCurrent();
+        long size = userAnswerQueryRequest.getPageSize();
+        // 限制爬虫
+        ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
+        // 查询数据库
+        Page<UserAnswer> userAnswerPage = userAnswerService.page(new Page<>(current, size), userAnswerService.getQueryWrapper(userAnswerQueryRequest));
+        // 获取封装类
+        return ResultUtils.success(userAnswerService.getUserAnswerVOPage(userAnswerPage, request));
+    }
+//
+//    /**
+//     * 分页获取用户答案列表（封装类）
+//     *
+//     * @param userAnswerQueryRequest 用户答案查询请求
+//     * @param request                请求对象
+//     * @return 用户答案分页列表封装类
+//     */
+//    @PostMapping("/list/page/vo")
+//    public BaseResponse<Page<UserAnswerVO>> listUserAnswerVOByPage(@RequestBody UserAnswerQueryRequest userAnswerQueryRequest, HttpServletRequest request) {
+//        long current = userAnswerQueryRequest.getCurrent();
+//        long size = userAnswerQueryRequest.getPageSize();
+//        // 限制爬虫
+//        ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
+//        // 查询数据库
+//        Page<UserAnswer> userAnswerPage = userAnswerService.page(new Page<>(current, size), userAnswerService.getQueryWrapper(userAnswerQueryRequest));
+//        // 获取封装类
+//        return ResultUtils.success(userAnswerService.getUserAnswerVOPage(userAnswerPage, request));
+//    }
+
+//    /**
+//     * 分页获取当前登录用户创建的用户答案列表
+//     *
+//     * @param userAnswerQueryRequest 用户答案查询请求
+//     * @param request                请求对象
+//     * @return 用户答案分页列表封装类
+//     */
+//    @PostMapping("/my/list/page/vo")
+//    public BaseResponse<Page<UserAnswerVO>> listMyUserAnswerVOByPage(@RequestBody UserAnswerQueryRequest userAnswerQueryRequest, HttpServletRequest request) {
+//        ThrowUtils.throwIf(userAnswerQueryRequest == null, ErrorCode.PARAMS_ERROR);
+//        // 补充查询条件，只查询当前登录用户的数据
+//        User loginUser = userService.getLoginUser(request);
+//        userAnswerQueryRequest.setUserId(loginUser.getId());
+//        long current = userAnswerQueryRequest.getCurrent();
+//        long size = userAnswerQueryRequest.getPageSize();
+//        // 限制爬虫
+//        ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
+//        // 查询数据库
+//        Page<UserAnswer> userAnswerPage = userAnswerService.page(new Page<>(current, size), userAnswerService.getQueryWrapper(userAnswerQueryRequest));
+//        // 获取封装类
+//        return ResultUtils.success(userAnswerService.getUserAnswerVOPage(userAnswerPage, request));
+//    }
+
+//    /**
+//     * 编辑用户答案（给用户使用）
+//     *
+//     * @param userAnswerEditRequest 用户答案编辑请求
+//     * @param request               请求对象
+//     * @return 操作结果
+//     */
+//    @PostMapping("/edit")
+//    public BaseResponse<Boolean> editUserAnswer(@RequestBody UserAnswerEditRequest userAnswerEditRequest, HttpServletRequest request) {
+//        if (userAnswerEditRequest == null || userAnswerEditRequest.getId() <= 0) {
+//            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+//        }
+//        // 在此处将实体类和 DTO 进行转换
+//        UserAnswer userAnswer = new UserAnswer();
+//        BeanUtils.copyProperties(userAnswerEditRequest, userAnswer);
+//        List<String> choices = Collections.singletonList(userAnswerEditRequest.getChoices());
+//        userAnswer.setChoices(JSONUtil.toJsonStr(choices));
+//        // 数据校验
+//        userAnswerService.validUserAnswer(userAnswer, false);
+//        User loginUser = userService.getLoginUser(request);
+//        // 判断是否存在
+//        long id = userAnswerEditRequest.getId();
+//        UserAnswer oldUserAnswer = userAnswerService.getById(id);
+//        ThrowUtils.throwIf(oldUserAnswer == null, ErrorCode.NOT_FOUND_ERROR);
+//        // 仅本人或管理员可编辑
+//        if (!oldUserAnswer.getUserid().equals(loginUser.getId()) && !userService.isAdmin(loginUser)) {
+//            throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
+//        }
+//        // 操作数据库
+//        boolean result = userAnswerService.updateById(userAnswer);
+//        ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
+//        return ResultUtils.success(true);
+//    }
+
+    // endregion
+}
