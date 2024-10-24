@@ -1,29 +1,27 @@
 package cn.cola.user.controller;
 
 
-import cn.cola.question.annotation.AuthCheck;
-import cn.cola.model.user.*;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import common.BaseResponse;
-import common.DeleteRequest;
-import common.ErrorCode;
-import common.ResultUtils;
-import common.exception.BusinessException;
-import common.exception.ThrowUtils;
-import constant.UserConstant;
-import lombok.extern.slf4j.Slf4j;
+import cn.cola.common.AuthCheck;
+import cn.cola.common.common.BaseResponse;
+import cn.cola.common.common.DeleteRequest;
+import cn.cola.common.common.ErrorCode;
+import cn.cola.common.common.ResultUtils;
+import cn.cola.common.common.exception.BusinessException;
+import cn.cola.common.common.exception.ThrowUtils;
+import cn.cola.common.constant.UserConstant;
 import cn.cola.model.po.User;
+import cn.cola.model.user.*;
 import cn.cola.model.vo.LoginUserVO;
+import cn.cola.serviceclient.service.UserService;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
-import cn.cola.serviceclient.service.UserService;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-
-import static constant.UserConstant.SALT;
 
 /**
  * 用户接口
@@ -62,7 +60,7 @@ public class UserController {
      * 用户登录
      */
     @PostMapping("/login")
-    public BaseResponse<LoginUserVO> userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request) {
+    public BaseResponse<LoginUserVO> userLogin(@RequestBody UserLoginRequest userLoginRequest) {
         if (userLoginRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "请求参数不能为空");
         }
@@ -71,7 +69,7 @@ public class UserController {
         if (StringUtils.isAnyBlank(userAccount, userPassword)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号、密码不能为空");
         }
-        LoginUserVO loginUserVO = userService.userLogin(userAccount, userPassword, request);
+        LoginUserVO loginUserVO = userService.userLogin(userAccount, userPassword);
         return ResultUtils.success(loginUserVO);
     }
 
@@ -115,7 +113,7 @@ public class UserController {
         BeanUtils.copyProperties(userAddRequest, user);
         // 默认密码 ColaBlack123456
         String defaultPassword = "ColaBlack123456";
-        String encryptPassword = DigestUtils.md5DigestAsHex((SALT + defaultPassword).getBytes());
+        String encryptPassword = DigestUtils.md5DigestAsHex((UserConstant.SALT + defaultPassword).getBytes());
         user.setUserPassword(encryptPassword);
         boolean result = userService.save(user);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);

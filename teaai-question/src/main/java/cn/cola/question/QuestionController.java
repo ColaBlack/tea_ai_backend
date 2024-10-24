@@ -1,16 +1,17 @@
 package cn.cola.question;
 
 
-import cn.cola.question.annotation.AuthCheck;
+
+import cn.cola.common.AuthCheck;
+import cn.cola.common.common.BaseResponse;
+import cn.cola.common.common.DeleteRequest;
+import cn.cola.common.common.ErrorCode;
+import cn.cola.common.common.ResultUtils;
+import cn.cola.common.common.exception.BusinessException;
+import cn.cola.common.common.exception.ThrowUtils;
+import cn.cola.common.constant.UserConstant;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import common.BaseResponse;
-import common.DeleteRequest;
-import common.ErrorCode;
-import common.ResultUtils;
-import common.exception.BusinessException;
-import common.exception.ThrowUtils;
-import constant.UserConstant;
 import lombok.extern.slf4j.Slf4j;
 import cn.cola.model.question.QuestionAddRequest;
 import cn.cola.model.question.QuestionContentDTO;
@@ -182,7 +183,7 @@ public class QuestionController {
         // 查询数据库
         Page<Question> questionPage = questionService.page(new Page<>(current, size), questionService.getQueryWrapper(questionQueryRequest));
         // 获取封装类
-        return ResultUtils.success(questionService.getQuestionVOPage(questionPage, request));
+        return ResultUtils.success(questionService.getQuestionVOPage(questionPage));
     }
 
 //    /**

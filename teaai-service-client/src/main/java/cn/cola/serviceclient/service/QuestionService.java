@@ -1,17 +1,18 @@
 package cn.cola.serviceclient.service;
 
 
+import cn.cola.common.constant.CommonConstant;
+import cn.cola.common.utils.SqlUtils;
 import cn.cola.model.po.Question;
 import cn.cola.model.question.QuestionQueryRequest;
 import cn.cola.model.vo.QuestionVO;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.IService;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 题目服务
@@ -19,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @author ColaBlack
  */
 @FeignClient(name = "teaai-question-service", url = "/api/question/")
-public interface QuestionService extends IService<Question> {
+public interface QuestionService {
 
     /**
      * 校验数据
@@ -27,8 +28,28 @@ public interface QuestionService extends IService<Question> {
      * @param question 待校验的数据
      * @param add      是否为创建的数据进行校验
      */
-    @PostMapping("/valid")
-    void validQuestion(Question question, boolean add);
+    @GetMapping("/valid")
+    void validQuestion(@RequestParam(value = "question") Question question,
+                       @RequestParam(value = "add") boolean add);
+
+    @PostMapping("/inner/get/one")
+    Question getOne(@RequestBody LambdaQueryWrapper queryWrapper);
+
+    @PostMapping("/inner/save")
+    boolean save(@RequestBody Question question);
+
+    @PostMapping("/inner/get/id")
+    Question getById(@RequestParam("id") Long id);
+
+    @DeleteMapping("/inner/delete/id")
+    boolean removeById(@RequestParam("id") Long id);
+
+    @PutMapping("/inner/update/id")
+    boolean updateById(@RequestBody Question question);
+
+    @GetMapping("/inner/get/page")
+    Page<Question> page(@RequestParam("page") Page<Question> questionPage,
+                        @RequestParam("query") QueryWrapper<Question> queryWrapper);
 
     /**
      * 获取查询条件
@@ -57,7 +78,7 @@ public interface QuestionService extends IService<Question> {
         queryWrapper.eq(ObjectUtils.isNotEmpty(questionBankId), "bankId", questionBankId);
         queryWrapper.eq(ObjectUtils.isNotEmpty(userId), "userId", userId);
         // 排序规则
-        queryWrapper.orderBy(utils.SqlUtils.validSortField(sortField), sortOrder.equals(constant.CommonConstant.SORT_ORDER_ASC), sortField);
+        queryWrapper.orderBy(SqlUtils.validSortField(sortField), sortOrder.equals(CommonConstant.SORT_ORDER_ASC), sortField);
         return queryWrapper;
     }
 

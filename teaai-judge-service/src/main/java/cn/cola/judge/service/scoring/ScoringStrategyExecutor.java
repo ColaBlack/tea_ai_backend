@@ -1,9 +1,8 @@
 package cn.cola.judge.service.scoring;
 
 
-
-import common.ErrorCode;
-import common.exception.BusinessException;
+import cn.cola.common.common.ErrorCode;
+import cn.cola.common.common.exception.BusinessException;
 import cn.cola.model.po.QuestionBank;
 import cn.cola.model.po.UserAnswer;
 import org.springframework.stereotype.Service;

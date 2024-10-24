@@ -1,6 +1,8 @@
 package cn.cola.answer.service;
 
 import cn.cola.answer.mapper.UserAnswerMapper;
+import cn.cola.common.common.ErrorCode;
+import cn.cola.common.common.exception.ThrowUtils;
 import cn.cola.model.po.QuestionBank;
 import cn.cola.model.po.User;
 import cn.cola.model.po.UserAnswer;
@@ -10,10 +12,9 @@ import cn.cola.serviceclient.service.QuestionBankService;
 import cn.cola.serviceclient.service.UserAnswerService;
 import cn.cola.serviceclient.service.UserService;
 import cn.hutool.core.collection.CollUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import common.ErrorCode;
-import common.exception.ThrowUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +38,21 @@ public class UserAnswerServiceImpl extends ServiceImpl<UserAnswerMapper, UserAns
 
     @Resource
     private QuestionBankService questionBankService;
+
+    @Override
+    public UserAnswer getById(Long id) {
+        return this.baseMapper.selectById(id);
+    }
+
+    @Override
+    public boolean removeById(Long id) {
+        return this.baseMapper.deleteById(id) > 0;
+    }
+
+    @Override
+    public Page<UserAnswer> page(Page<UserAnswerVO> page, QueryWrapper<UserAnswer> queryWrapper) {
+        return this.page(page, queryWrapper);
+    }
 
     /**
      * 校验数据
@@ -125,4 +141,13 @@ public class UserAnswerServiceImpl extends ServiceImpl<UserAnswerMapper, UserAns
         return userAnswerVOPage;
     }
 
+    @Override
+    public boolean save(UserAnswer entity) {
+        return super.save(entity);
+    }
+
+    @Override
+    public boolean updateById(UserAnswer entity) {
+        return super.updateById(entity);
+    }
 }

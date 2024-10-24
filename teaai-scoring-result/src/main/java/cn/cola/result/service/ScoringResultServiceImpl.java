@@ -1,30 +1,26 @@
 package cn.cola.result.service;
 
-import cn.cola.serviceclient.service.QuestionBankService;
-import cn.cola.serviceclient.service.ScoringResultService;
-import cn.cola.serviceclient.service.UserService;
-import cn.cola.result.mapper.ScoringResultMapper;
-import cn.hutool.core.collection.CollUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import common.ErrorCode;
-import common.exception.ThrowUtils;
-import constant.CommonConstant;
-import lombok.extern.slf4j.Slf4j;
-import cn.cola.model.scoringresult.ScoringResultQueryRequest;
+import cn.cola.common.common.ErrorCode;
+import cn.cola.common.common.exception.ThrowUtils;
 import cn.cola.model.po.QuestionBank;
 import cn.cola.model.po.ScoringResult;
 import cn.cola.model.po.User;
 import cn.cola.model.vo.ScoringResultVO;
 import cn.cola.model.vo.UserVO;
-import org.apache.commons.lang3.ObjectUtils;
+import cn.cola.result.mapper.ScoringResultMapper;
+import cn.cola.serviceclient.service.QuestionBankService;
+import cn.cola.serviceclient.service.ScoringResultService;
+import cn.cola.serviceclient.service.UserService;
+import cn.hutool.core.collection.CollUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import utils.SqlUtils;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -44,6 +40,36 @@ public class ScoringResultServiceImpl extends ServiceImpl<ScoringResultMapper, S
 
     @Resource
     private QuestionBankService questionBankService;
+
+    @Override
+    public List<ScoringResult> list(QueryWrapper queryWrapper) {
+        return this.baseMapper.selectList(queryWrapper);
+    }
+
+    @Override
+    public List<ScoringResult> list(LambdaQueryWrapper lambdaQueryWrapper) {
+        return this.baseMapper.selectList(lambdaQueryWrapper);
+    }
+
+    @Override
+    public Page<ScoringResult> page(Page<ScoringResult> page, QueryWrapper queryWrapper) {
+        return this.baseMapper.selectPage(page, queryWrapper);
+    }
+
+    @Override
+    public boolean save(ScoringResult scoringResult, QueryWrapper<ScoringResult> queryWrapper) {
+        return this.baseMapper.insert(scoringResult) > 0;
+    }
+
+    @Override
+    public boolean removeById(Long id) {
+        return this.baseMapper.deleteById(id) > 0;
+    }
+
+    @Override
+    public ScoringResult getById(Long id) {
+        return this.baseMapper.selectById(id);
+    }
 
     /**
      * 校验数据
@@ -137,4 +163,13 @@ public class ScoringResultServiceImpl extends ServiceImpl<ScoringResultMapper, S
         return scoringResultVOPage;
     }
 
+    @Override
+    public boolean save(ScoringResult entity) {
+        return super.save(entity);
+    }
+
+    @Override
+    public boolean updateById(ScoringResult entity) {
+        return super.updateById(entity);
+    }
 }

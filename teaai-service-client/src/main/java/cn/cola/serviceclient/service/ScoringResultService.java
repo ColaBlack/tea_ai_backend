@@ -1,17 +1,20 @@
 package cn.cola.serviceclient.service;
 
 
+import cn.cola.common.constant.CommonConstant;
+import cn.cola.common.utils.SqlUtils;
 import cn.cola.model.po.ScoringResult;
 import cn.cola.model.scoringresult.ScoringResultQueryRequest;
 import cn.cola.model.vo.ScoringResultVO;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.IService;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 评分结果服务
@@ -19,7 +22,33 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @author ColaBlack
  */
 @FeignClient(name = "teaai-scoring-result", url = "/api/scoring/result")
-public interface ScoringResultService extends IService<ScoringResult> {
+public interface ScoringResultService {
+
+    @PostMapping("/inner/list/queryWrapper")
+    List<ScoringResult> list(@RequestBody QueryWrapper queryWrapper);
+
+    @PostMapping("/inner/list/lambdaQueryWrapper")
+    List<ScoringResult> list(@RequestBody LambdaQueryWrapper lambdaQueryWrapper);
+
+    @GetMapping("/inner/page")
+    Page<ScoringResult> page(@RequestParam(value = "page") Page<ScoringResult> page,
+                             @RequestParam(value = "queryWrapper") QueryWrapper queryWrapper);
+
+    @GetMapping("/inner/save/queryWrapper")
+    boolean save(@RequestParam(value = "scoringResult") ScoringResult scoringResult,
+                 @RequestParam(value = "QueryWrapper") QueryWrapper<ScoringResult> queryWrapper);
+
+    @PostMapping("/inner/save")
+    boolean save(@RequestBody ScoringResult scoringResult);
+
+    @DeleteMapping("/inner/delete")
+    boolean removeById(@RequestParam(value = "id") Long id);
+
+    @GetMapping("/inner/get/id")
+    ScoringResult getById(@RequestParam(value = "id") Long id);
+
+    @PostMapping("/inner/update/id")
+    boolean updateById(@RequestBody ScoringResult scoringResult);
 
     /**
      * 校验数据
@@ -27,8 +56,9 @@ public interface ScoringResultService extends IService<ScoringResult> {
      * @param scoringResult 待校验的数据
      * @param add           是否为创建的数据进行校验
      */
-    @PostMapping("/valid")
-    void validScoringResult(@RequestBody ScoringResult scoringResult, @RequestBody boolean add);
+    @GetMapping("/valid")
+    void validScoringResult(@RequestParam(value = "scoringResult") ScoringResult scoringResult,
+                            @RequestParam(value = "add") boolean add);
 
     /**
      * 获取查询条件
@@ -69,7 +99,7 @@ public interface ScoringResultService extends IService<ScoringResult> {
         queryWrapper.eq(ObjectUtils.isNotEmpty(bankid), "bankid", bankid);
         queryWrapper.eq(ObjectUtils.isNotEmpty(resultScoreRange), "result_score_range", resultScoreRange);
         // 排序规则
-        queryWrapper.orderBy(utils.SqlUtils.validSortField(sortField), sortOrder.equals(constant.CommonConstant.SORT_ORDER_ASC), sortField);
+        queryWrapper.orderBy(SqlUtils.validSortField(sortField), sortOrder.equals(CommonConstant.SORT_ORDER_ASC), sortField);
         return queryWrapper;
     }
 

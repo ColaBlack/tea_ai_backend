@@ -1,16 +1,17 @@
 package cn.cola.result.controller;
 
 
-import cn.cola.question.annotation.AuthCheck;
+
+import cn.cola.common.AuthCheck;
+import cn.cola.common.common.BaseResponse;
+import cn.cola.common.common.DeleteRequest;
+import cn.cola.common.common.ErrorCode;
+import cn.cola.common.common.ResultUtils;
+import cn.cola.common.common.exception.BusinessException;
+import cn.cola.common.common.exception.ThrowUtils;
+import cn.cola.common.constant.UserConstant;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import common.BaseResponse;
-import common.DeleteRequest;
-import common.ErrorCode;
-import common.ResultUtils;
-import common.exception.BusinessException;
-import common.exception.ThrowUtils;
-import constant.UserConstant;
 import lombok.extern.slf4j.Slf4j;
 import cn.cola.model.scoringresult.ScoringResultAddRequest;
 import cn.cola.model.scoringresult.ScoringResultEditRequest;
@@ -178,7 +179,7 @@ public class ScoringResultController {
         // 查询数据库
         Page<ScoringResult> scoringResultPage = scoringResultService.page(new Page<>(current, size), scoringResultService.getQueryWrapper(scoringResultQueryRequest));
         // 获取封装类
-        return ResultUtils.success(scoringResultService.getScoringResultVOPage(scoringResultPage, request));
+        return ResultUtils.success(scoringResultService.getScoringResultVOPage(scoringResultPage));
     }
 
 //    /**

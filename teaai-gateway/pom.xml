@@ -46,6 +46,17 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>edu.zafu</groupId>
+                <artifactId>teaai-service-client</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/com.github.xiaoymin/knife4j-gateway-spring-boot-starter -->
+            <dependency>
+                <groupId>com.github.xiaoymin</groupId>
+                <artifactId>knife4j-gateway-spring-boot-starter</artifactId>
+                <version>4.5.0</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -66,7 +77,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring-boot.version}</version>
                 <configuration>
-                    <mainClass>cn.cola.gateway.TeaaiGatewayApplication</mainClass>
+                    <mainClass>cn.cola.gateway.GatewayApplication</mainClass>
                     <skip>true</skip>
                 </configuration>
                 <executions>

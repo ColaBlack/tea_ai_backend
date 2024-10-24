@@ -28,6 +28,11 @@
             <artifactId>teaai-common</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>edu.zafu</groupId>
+            <artifactId>teaai-service-client</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
 </project>

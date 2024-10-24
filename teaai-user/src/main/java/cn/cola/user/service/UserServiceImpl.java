@@ -1,19 +1,23 @@
 package cn.cola.user.service;
 
 
+import cn.cola.common.common.ErrorCode;
+import cn.cola.common.common.exception.BusinessException;
+import cn.cola.common.constant.UserConstant;
 import cn.cola.model.po.User;
 import cn.cola.model.vo.LoginUserVO;
 import cn.cola.serviceclient.service.UserService;
 import cn.cola.user.mapper.UserMapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import common.ErrorCode;
-import common.exception.BusinessException;
-import constant.UserConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * 用户服务实现
@@ -89,5 +93,35 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户不存在或密码错误");
         }
         return this.getLoginUserVO(user);
+    }
+
+    @Override
+    public User getById(Long id) {
+        return this.baseMapper.selectById(id);
+    }
+
+    @Override
+    public boolean removeById(Long id) {
+        return this.baseMapper.deleteById(id) > 0;
+    }
+
+    @Override
+    public Page<User> page(Page<User> page, QueryWrapper<User> queryWrapper) {
+        return this.baseMapper.selectPage(page, queryWrapper);
+    }
+
+    @Override
+    public List<User> listByIds(Set<Long> ids) {
+        return this.baseMapper.selectBatchIds(ids);
+    }
+
+    @Override
+    public boolean save(User entity) {
+        return super.save(entity);
+    }
+
+    @Override
+    public boolean updateById(User entity) {
+        return super.updateById(entity);
     }
 }

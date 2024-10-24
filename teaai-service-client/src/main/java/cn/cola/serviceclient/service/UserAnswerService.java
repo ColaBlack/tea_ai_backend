@@ -1,17 +1,17 @@
 package cn.cola.serviceclient.service;
 
 
+import cn.cola.common.constant.CommonConstant;
+import cn.cola.common.utils.SqlUtils;
 import cn.cola.model.po.UserAnswer;
 import cn.cola.model.useranswer.UserAnswerQueryRequest;
 import cn.cola.model.vo.UserAnswerVO;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.IService;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 用户答案服务
@@ -19,7 +19,24 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @author ColaBlack
  */
 @FeignClient(value = "teaai-user-answer", url = "/api/user/answer")
-public interface UserAnswerService extends IService<UserAnswer> {
+public interface UserAnswerService {
+
+    @PutMapping("/inner/save")
+    boolean save(@RequestBody UserAnswer userAnswer);
+
+    @PutMapping("/inner/update/id")
+    boolean updateById(@RequestBody UserAnswer userAnswer);
+
+    @GetMapping("/inner/get/id")
+    UserAnswer getById(@RequestParam("id") Long id);
+
+
+    @DeleteMapping("/inner/remove/id")
+    boolean removeById(@RequestParam("id") Long id);
+
+    @GetMapping("/inner/get/page")
+    Page<UserAnswer> page(@RequestParam("page") Page<UserAnswerVO> page,@RequestParam("queryWrapper") QueryWrapper<UserAnswer> queryWrapper);
+
 
     /**
      * 校验数据
@@ -27,8 +44,9 @@ public interface UserAnswerService extends IService<UserAnswer> {
      * @param userAnswer 待校验的数据
      * @param add        是否为创建的数据进行校验
      */
-    @PostMapping("/valid")
-    void validUserAnswer(@RequestBody UserAnswer userAnswer, @RequestBody boolean add);
+    @GetMapping("/valid")
+    void validUserAnswer(@RequestParam(value = "userAnswer") UserAnswer userAnswer,
+                         @RequestParam(value = "add") boolean add);
 
     /**
      * 获取查询条件
@@ -77,7 +95,7 @@ public interface UserAnswerService extends IService<UserAnswer> {
         queryWrapper.eq(ObjectUtils.isNotEmpty(resultScore), "result_score", resultScore);
         queryWrapper.eq(ObjectUtils.isNotEmpty(scoringStrategy), "scoring_strategy", scoringStrategy);
         // 排序规则
-        queryWrapper.orderBy(utils.SqlUtils.validSortField(sortField), sortOrder.equals(constant.CommonConstant.SORT_ORDER_ASC), sortField);
+        queryWrapper.orderBy(SqlUtils.validSortField(sortField), sortOrder.equals(CommonConstant.SORT_ORDER_ASC), sortField);
         return queryWrapper;
     }
 

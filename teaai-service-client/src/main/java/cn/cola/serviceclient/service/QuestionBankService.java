@@ -1,6 +1,10 @@
 package cn.cola.serviceclient.service;
 
 
+import cn.cola.common.common.ErrorCode;
+import cn.cola.common.common.exception.ThrowUtils;
+import cn.cola.common.constant.CommonConstant;
+import cn.cola.common.utils.SqlUtils;
 import cn.cola.model.enums.QuestionBankScoringStrategyEnum;
 import cn.cola.model.enums.QuestionBankTypeEnum;
 import cn.cola.model.enums.ReviewStatusEnum;
@@ -9,12 +13,10 @@ import cn.cola.model.questionbank.QuestionBankQueryRequest;
 import cn.cola.model.vo.QuestionBankVO;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.IService;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 题库服务
@@ -22,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @author ColaBlack
  */
 @FeignClient(name = "teaai-question-bank", url = "/api/question/bank/")
-public interface QuestionBankService extends IService<QuestionBank> {
+public interface QuestionBankService {
 
     /**
      * 校验数据
@@ -31,7 +33,7 @@ public interface QuestionBankService extends IService<QuestionBank> {
      * @param add          是否为创建的数据进行校验
      */
     default void validQuestionBank(QuestionBank questionBank, boolean add) {
-        common.exception.ThrowUtils.throwIf(questionBank == null, common.ErrorCode.PARAMS_ERROR);
+        ThrowUtils.throwIf(questionBank == null, ErrorCode.PARAMS_ERROR);
         // 从对象中取值
         String bankName = questionBank.getBankName();
         String bankDesc = questionBank.getBankDesc();
@@ -42,21 +44,21 @@ public interface QuestionBankService extends IService<QuestionBank> {
         // 创建数据时，参数不能为空
         if (add) {
             // 补充校验规则
-            common.exception.ThrowUtils.throwIf(StringUtils.isBlank(bankName), common.ErrorCode.PARAMS_ERROR, "题库名称不能为空");
-            common.exception.ThrowUtils.throwIf(StringUtils.isBlank(bankDesc), common.ErrorCode.PARAMS_ERROR, "题库描述不能为空");
+            ThrowUtils.throwIf(StringUtils.isBlank(bankName), ErrorCode.PARAMS_ERROR, "题库名称不能为空");
+            ThrowUtils.throwIf(StringUtils.isBlank(bankDesc), ErrorCode.PARAMS_ERROR, "题库描述不能为空");
             QuestionBankTypeEnum questionBankTypeEnum = QuestionBankTypeEnum.getEnumByValue(bankType);
-            common.exception.ThrowUtils.throwIf(questionBankTypeEnum == null, common.ErrorCode.PARAMS_ERROR, "题库类别非法");
+            ThrowUtils.throwIf(questionBankTypeEnum == null, ErrorCode.PARAMS_ERROR, "题库类别非法");
             QuestionBankScoringStrategyEnum scoringStrategyEnum = QuestionBankScoringStrategyEnum.getEnumByValue(scoringStrategy);
-            common.exception.ThrowUtils.throwIf(scoringStrategyEnum == null, common.ErrorCode.PARAMS_ERROR, "题库评分策略非法");
+            ThrowUtils.throwIf(scoringStrategyEnum == null, ErrorCode.PARAMS_ERROR, "题库评分策略非法");
         }
         // 修改数据时，有参数则校验
         // 补充校验规则
         if (StringUtils.isNotBlank(bankName)) {
-            common.exception.ThrowUtils.throwIf(bankName.length() > 80, common.ErrorCode.PARAMS_ERROR, "题库名称要小于 80");
+            ThrowUtils.throwIf(bankName.length() > 80, ErrorCode.PARAMS_ERROR, "题库名称要小于 80");
         }
         if (reviewStatus != null) {
             ReviewStatusEnum reviewStatusEnum = ReviewStatusEnum.getEnumByValue(reviewStatus);
-            common.exception.ThrowUtils.throwIf(reviewStatusEnum == null, common.ErrorCode.PARAMS_ERROR, "审核状态非法");
+            ThrowUtils.throwIf(reviewStatusEnum == null, ErrorCode.PARAMS_ERROR, "审核状态非法");
         }
     }
 
@@ -103,8 +105,8 @@ public interface QuestionBankService extends IService<QuestionBank> {
         queryWrapper.eq(ObjectUtils.isNotEmpty(reviewerId), "reviewerId", reviewerId);
         queryWrapper.eq(ObjectUtils.isNotEmpty(userId), "user_Id", userId);
         // 排序规则
-        queryWrapper.orderBy(utils.SqlUtils.validSortField(sortField),
-                sortOrder.equals(constant.CommonConstant.SORT_ORDER_ASC),
+        queryWrapper.orderBy(SqlUtils.validSortField(sortField),
+                sortOrder.equals(CommonConstant.SORT_ORDER_ASC),
                 sortField);
         return queryWrapper;
     }
@@ -135,6 +137,27 @@ public interface QuestionBankService extends IService<QuestionBank> {
      * @param id            题库id
      * @param reviewStatus  审核状态
      */
-    @PostMapping("/review")
-    boolean questionBankReview(@RequestBody String reviewMessage, @RequestBody Long reviewerId, @RequestBody Long id, @RequestBody Integer reviewStatus);
+    @GetMapping("/review")
+    boolean questionBankReview(
+            @RequestParam(value = "reviewMessage") String reviewMessage,
+            @RequestParam(value = "reviewerId") Long reviewerId,
+            @RequestParam(value = "id") Long id,
+            @RequestParam(value = "reviewStatus") Integer reviewStatus
+    );
+
+    @GetMapping("/inner/get/id")
+    QuestionBank getById(@RequestParam(value = "id") Long id);
+
+    @PostMapping("/inner/save")
+    boolean save(@RequestBody QuestionBank questionBank);
+
+    @PostMapping("/inner/update")
+    boolean updateById(@RequestBody QuestionBank questionBank);
+
+    @DeleteMapping("/inner/delete/id")
+    boolean removeById(@RequestParam(value = "id") Long id);
+
+    @GetMapping("/inner/get/page")
+    Page<QuestionBank> page(@RequestParam(value = "QuestionBankPage") Page<QuestionBank> questionBankPage,
+                            @RequestParam(value = "queryWrapper") QueryWrapper<QuestionBank> queryWrapper);
 }

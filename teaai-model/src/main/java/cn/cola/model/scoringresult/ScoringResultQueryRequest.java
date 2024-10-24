@@ -1,9 +1,9 @@
 package cn.cola.model.scoringresult;
 
 
+import cn.cola.model.PageRequest;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import common.PageRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

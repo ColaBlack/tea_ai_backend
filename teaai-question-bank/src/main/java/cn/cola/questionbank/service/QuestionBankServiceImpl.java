@@ -1,6 +1,9 @@
 package cn.cola.questionbank.service;
 
 
+import cn.cola.common.common.ErrorCode;
+import cn.cola.common.common.exception.BusinessException;
+import cn.cola.common.common.exception.ThrowUtils;
 import cn.cola.model.enums.ReviewStatusEnum;
 import cn.cola.model.po.QuestionBank;
 import cn.cola.model.po.User;
@@ -10,11 +13,9 @@ import cn.cola.questionbank.mapper.QuestionBankMapper;
 import cn.cola.serviceclient.service.QuestionBankService;
 import cn.cola.serviceclient.service.UserService;
 import cn.hutool.core.collection.CollUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import common.ErrorCode;
-import common.exception.BusinessException;
-import common.exception.ThrowUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -131,5 +132,30 @@ public class QuestionBankServiceImpl extends ServiceImpl<QuestionBankMapper, Que
         int result = this.baseMapper.updateById(questionBank);
         ThrowUtils.throwIf(result <= 0, ErrorCode.OPERATION_ERROR);
         return true;
+    }
+
+    @Override
+    public QuestionBank getById(Long id) {
+        return this.baseMapper.selectById(id);
+    }
+
+    @Override
+    public boolean removeById(Long id) {
+        return this.baseMapper.deleteById(id) > 0;
+    }
+
+    @Override
+    public Page<QuestionBank> page(Page<QuestionBank> questionBankPage, QueryWrapper<QuestionBank> queryWrapper) {
+        return this.baseMapper.selectPage(questionBankPage, queryWrapper);
+    }
+
+    @Override
+    public boolean save(QuestionBank entity) {
+        return super.save(entity);
+    }
+
+    @Override
+    public boolean updateById(QuestionBank entity) {
+        return super.updateById(entity);
     }
 }

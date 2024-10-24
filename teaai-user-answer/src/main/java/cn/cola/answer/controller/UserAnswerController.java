@@ -1,16 +1,18 @@
 package cn.cola.answer.controller;
 
 
-import cn.cola.question.annotation.AuthCheck;
+
+import cn.cola.common.AuthCheck;
+import cn.cola.common.common.BaseResponse;
+import cn.cola.common.common.DeleteRequest;
+import cn.cola.common.common.ErrorCode;
+import cn.cola.common.common.ResultUtils;
+import cn.cola.common.common.exception.BusinessException;
+import cn.cola.common.common.exception.ThrowUtils;
+import cn.cola.common.constant.UserConstant;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import common.BaseResponse;
-import common.DeleteRequest;
-import common.ErrorCode;
-import common.ResultUtils;
-import common.exception.BusinessException;
-import common.exception.ThrowUtils;
-import constant.UserConstant;
+
 import lombok.extern.slf4j.Slf4j;
 import cn.cola.model.useranswer.UserAnswerAddRequest;
 import cn.cola.model.useranswer.UserAnswerQueryRequest;
@@ -167,7 +169,7 @@ public class UserAnswerController {
         UserAnswer userAnswer = userAnswerService.getById(id);
         ThrowUtils.throwIf(userAnswer == null, ErrorCode.NOT_FOUND_ERROR);
         // 获取封装类
-        return ResultUtils.success(userAnswerService.getUserAnswerVO(userAnswer, request));
+        return ResultUtils.success(userAnswerService.getUserAnswerVO(userAnswer));
     }
 
     /**
@@ -204,7 +206,7 @@ public class UserAnswerController {
         // 查询数据库
         Page<UserAnswer> userAnswerPage = userAnswerService.page(new Page<>(current, size), userAnswerService.getQueryWrapper(userAnswerQueryRequest));
         // 获取封装类
-        return ResultUtils.success(userAnswerService.getUserAnswerVOPage(userAnswerPage, request));
+        return ResultUtils.success(userAnswerService.getUserAnswerVOPage(userAnswerPage));
     }
 //
 //    /**

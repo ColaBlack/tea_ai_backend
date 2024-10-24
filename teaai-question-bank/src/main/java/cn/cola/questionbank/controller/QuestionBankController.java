@@ -1,28 +1,29 @@
 package cn.cola.questionbank.controller;
 
 
-import cn.cola.question.annotation.AuthCheck;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import common.BaseResponse;
-import common.DeleteRequest;
-import common.ErrorCode;
-import common.ResultUtils;
-import common.exception.BusinessException;
-import common.exception.ThrowUtils;
-import constant.UserConstant;
-import lombok.extern.slf4j.Slf4j;
+import cn.cola.common.AuthCheck;
+import cn.cola.common.common.BaseResponse;
+import cn.cola.common.common.DeleteRequest;
+import cn.cola.common.common.ErrorCode;
+import cn.cola.common.common.ResultUtils;
+import cn.cola.common.common.exception.BusinessException;
+import cn.cola.common.common.exception.ThrowUtils;
+import cn.cola.common.constant.UserConstant;
+import cn.cola.model.enums.ReviewStatusEnum;
+import cn.cola.model.po.QuestionBank;
+import cn.cola.model.po.User;
 import cn.cola.model.questionbank.QuestionBankAddRequest;
 import cn.cola.model.questionbank.QuestionBankEditRequest;
 import cn.cola.model.questionbank.QuestionBankQueryRequest;
 import cn.cola.model.questionbank.ReviewRequest;
-import cn.cola.model.enums.ReviewStatusEnum;
-import cn.cola.model.po.QuestionBank;
-import cn.cola.model.po.User;
 import cn.cola.model.vo.QuestionBankVO;
-import org.springframework.beans.BeanUtils;
-import org.springframework.web.bind.annotation.*;
+import cn.cola.model.vo.UserVO;
 import cn.cola.serviceclient.service.QuestionBankService;
 import cn.cola.serviceclient.service.UserService;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -251,7 +252,9 @@ public class QuestionBankController {
         Long id = reviewRequest.getId();
         Integer reviewStatus = reviewRequest.getReviewStatus();
         String reviewMessage = reviewRequest.getReviewMessage();
-        return ResultUtils.success(questionBankService.questionBankReview(reviewMessage, request, id, reviewStatus));
+        UserVO reviewer = (UserVO) request.getSession().getAttribute(UserConstant.USER_LOGIN_STATE);
+        Long reviewerId = reviewer.getId();
+        return ResultUtils.success(questionBankService.questionBankReview(reviewMessage, reviewerId, id, reviewStatus));
     }
 
 

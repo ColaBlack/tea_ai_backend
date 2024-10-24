@@ -1,21 +1,25 @@
 package cn.cola.serviceclient.service;
 
+import cn.cola.common.common.ErrorCode;
+import cn.cola.common.common.exception.BusinessException;
+import cn.cola.common.constant.CommonConstant;
+import cn.cola.common.constant.UserConstant;
+import cn.cola.common.utils.SqlUtils;
 import cn.cola.model.enums.UserRoleEnum;
 import cn.cola.model.po.User;
 import cn.cola.model.user.UserQueryRequest;
 import cn.cola.model.vo.LoginUserVO;
 import cn.cola.model.vo.UserVO;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-
-import static constant.UserConstant.USER_LOGIN_STATE;
+import java.util.List;
+import java.util.Set;
 
 /**
  * 用户服务
@@ -23,7 +27,7 @@ import static constant.UserConstant.USER_LOGIN_STATE;
  * @author ColaBlack
  */
 @FeignClient(name = "teaai-user", url = "/api/user")
-public interface UserService extends IService<User> {
+public interface UserService {
 
     /**
      * 用户注册
@@ -33,8 +37,10 @@ public interface UserService extends IService<User> {
      * @param checkPassword 校验密码
      * @return 新用户 id
      */
-    @PostMapping("/register")
-    long userRegister(@RequestBody String userAccount, @RequestBody String userPassword, @RequestBody String checkPassword);
+    @GetMapping("/register")
+    long userRegister(@RequestParam(value = "userAccount") String userAccount,
+                      @RequestParam(value = "userPassword") String userPassword,
+                      @RequestParam(value = "checkPassword") String checkPassword);
 
     /**
      * 用户登录
@@ -43,8 +49,25 @@ public interface UserService extends IService<User> {
      * @param userPassword 用户密码
      * @return 脱敏后的用户信息
      */
-    @PostMapping("/login")
-    LoginUserVO userLogin(@RequestBody String userAccount, @RequestBody String userPassword);
+    @GetMapping("/login")
+    LoginUserVO userLogin(@RequestParam(value = "userAccount") String userAccount,
+                          @RequestParam(value = "userPassword") String userPassword);
+
+    @GetMapping("/inner/get/id")
+    User getById(@RequestParam(value = "id") Long id);
+
+    @PutMapping("/inner/save")
+    boolean save(@RequestBody User user);
+
+    @DeleteMapping("/inner/remove/id")
+    boolean removeById(@RequestParam(value = "id") Long id);
+
+    @PutMapping("/inner/update/id")
+    boolean updateById(@RequestBody User user);
+
+    @GetMapping("/inner/page/queryWrapper")
+    Page<User> page(@RequestParam(value = "page") Page<User> page,
+                    @RequestParam(value = "queryWrapper") QueryWrapper<User> queryWrapper);
 
 
     /**
@@ -52,16 +75,16 @@ public interface UserService extends IService<User> {
      */
     default User getLoginUser(HttpServletRequest request) {
         // 先判断是否已登录
-        Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
+        Object userObj = request.getSession().getAttribute(UserConstant.USER_LOGIN_STATE);
         User currentUser = (User) userObj;
         if (currentUser == null || currentUser.getId() == null) {
-            throw new common.exception.BusinessException(common.ErrorCode.NOT_LOGIN_ERROR);
+            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
         }
         // 从数据库查询（追求性能的话可以注释，直接走缓存）
         long userId = currentUser.getId();
         currentUser = this.getById(userId);
         if (currentUser == null) {
-            throw new common.exception.BusinessException(common.ErrorCode.NOT_LOGIN_ERROR);
+            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR);
         }
         return currentUser;
     }
@@ -71,7 +94,7 @@ public interface UserService extends IService<User> {
      */
     default boolean isAdmin(HttpServletRequest request) {
         // 仅管理员可查询
-        Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
+        Object userObj = request.getSession().getAttribute(UserConstant.USER_LOGIN_STATE);
         User user = (User) userObj;
         return isAdmin(user);
     }
@@ -79,26 +102,26 @@ public interface UserService extends IService<User> {
     /**
      * 是否为管理员
      */
-    default boolean isAdmin(User user){
+    default boolean isAdmin(User user) {
         return user != null && UserRoleEnum.ADMIN.getValue().equals(user.getUserRole());
     }
 
     /**
      * 用户注销
      */
-    default boolean userLogout(HttpServletRequest request){
-        if (request.getSession().getAttribute(USER_LOGIN_STATE) == null) {
-            throw new common.exception.BusinessException(common.ErrorCode.OPERATION_ERROR, "未登录");
+    default boolean userLogout(HttpServletRequest request) {
+        if (request.getSession().getAttribute(UserConstant.USER_LOGIN_STATE) == null) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "未登录");
         }
         // 移除登录态
-        request.getSession().removeAttribute(USER_LOGIN_STATE);
+        request.getSession().removeAttribute(UserConstant.USER_LOGIN_STATE);
         return true;
     }
 
     /**
      * 获取脱敏的已登录用户信息
      */
-    default LoginUserVO getLoginUserVO(User user){
+    default LoginUserVO getLoginUserVO(User user) {
         if (user == null) {
             return null;
         }
@@ -110,7 +133,7 @@ public interface UserService extends IService<User> {
     /**
      * 获取脱敏的用户信息
      */
-    default UserVO getUserVO(User user){
+    default UserVO getUserVO(User user) {
         if (user == null) {
             return null;
         }
@@ -122,9 +145,9 @@ public interface UserService extends IService<User> {
     /**
      * 获取查询条件
      */
-    default QueryWrapper<User> getQueryWrapper(UserQueryRequest userQueryRequest){
+    default QueryWrapper<User> getQueryWrapper(UserQueryRequest userQueryRequest) {
         if (userQueryRequest == null) {
-            throw new common.exception.BusinessException(common.ErrorCode.PARAMS_ERROR, "请求参数为空");
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "请求参数为空");
         }
         Long id = userQueryRequest.getId();
         String userName = userQueryRequest.getUserName();
@@ -137,8 +160,10 @@ public interface UserService extends IService<User> {
         queryWrapper.eq(StringUtils.isNotBlank(userRole), "user_role", userRole);
         queryWrapper.like(StringUtils.isNotBlank(userProfile), "user_profile", userProfile);
         queryWrapper.like(StringUtils.isNotBlank(userName), "user_name", userName);
-        queryWrapper.orderBy(utils.SqlUtils.validSortField(sortField), sortOrder.equals(constant.CommonConstant.SORT_ORDER_ASC), sortField);
+        queryWrapper.orderBy(SqlUtils.validSortField(sortField), sortOrder.equals(CommonConstant.SORT_ORDER_ASC), sortField);
         return queryWrapper;
     }
 
+    @PostMapping("/inner/list/ids")
+    List<User> listByIds(@RequestBody Set<Long> ids);
 }

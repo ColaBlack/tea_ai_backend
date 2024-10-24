@@ -1,30 +1,28 @@
 package cn.cola.question.service;
 
+import cn.cola.common.common.ErrorCode;
+import cn.cola.common.common.exception.ThrowUtils;
+import cn.cola.model.po.Question;
+import cn.cola.model.po.QuestionBank;
+import cn.cola.model.po.User;
+import cn.cola.model.question.QuestionQueryRequest;
+import cn.cola.model.vo.QuestionVO;
+import cn.cola.model.vo.UserVO;
+import cn.cola.question.mapper.QuestionMapper;
 import cn.cola.serviceclient.service.QuestionBankService;
 import cn.cola.serviceclient.service.QuestionService;
 import cn.cola.serviceclient.service.UserService;
 import cn.hutool.core.collection.CollUtil;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import common.ErrorCode;
-import common.exception.ThrowUtils;
-import constant.CommonConstant;
 import lombok.extern.slf4j.Slf4j;
-import cn.cola.question.mapper.QuestionMapper;
-import cn.cola.model.question.QuestionQueryRequest;
-import cn.cola.model.po.Question;
-import cn.cola.model.po.QuestionBank;
-import cn.cola.model.po.User;
-import cn.cola.model.vo.QuestionVO;
-import cn.cola.model.vo.UserVO;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import utils.SqlUtils;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -38,6 +36,25 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> implements QuestionService {
+    @Override
+    public Question getById(Long id) {
+        return this.baseMapper.selectById(id);
+    }
+
+    @Override
+    public boolean removeById(Long id) {
+        return this.baseMapper.deleteById(id) > 0;
+    }
+
+    @Override
+    public Page<Question> page(Page<Question> questionPage, QueryWrapper<Question> queryWrapper) {
+        return this.baseMapper.selectPage(questionPage, queryWrapper);
+    }
+
+    @Override
+    public QueryWrapper<Question> getQueryWrapper(QuestionQueryRequest questionQueryRequest) {
+        return QuestionService.super.getQueryWrapper(questionQueryRequest);
+    }
 
     @Resource
     private UserService userService;
@@ -69,6 +86,11 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
             QuestionBank questionBank = questionBankService.getById(bankid);
             ThrowUtils.throwIf(questionBank == null, ErrorCode.PARAMS_ERROR, "题库不存在");
         }
+    }
+
+    @Override
+    public Question getOne(LambdaQueryWrapper queryWrapper) {
+        return this.getOne((Wrapper<Question>) queryWrapper);
     }
 
     /**
@@ -134,4 +156,13 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
         return questionVOPage;
     }
 
+    @Override
+    public boolean save(Question entity) {
+        return super.save(entity);
+    }
+
+    @Override
+    public boolean updateById(Question entity) {
+        return super.updateById(entity);
+    }
 }

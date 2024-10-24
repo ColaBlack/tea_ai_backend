@@ -1,7 +1,8 @@
 package cn.cola.model.useranswer;
 
 
-import common.PageRequest;
+
+import cn.cola.model.PageRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

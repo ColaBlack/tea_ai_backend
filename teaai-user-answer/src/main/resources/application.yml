@@ -11,7 +11,6 @@ spring:
       matching-strategy: ant_path_matcher
   # session 配置
   session:
-
     store-type: redis
     # 30 天过期
     timeout: 2592000
@@ -34,15 +33,24 @@ spring:
     multipart:
       # 大小限制
       max-file-size: 10MB
+  cloud:
+    nacos:
+      config:
+        server-addr: localhost:8848/nacos
+        import-check:
+          enabled: false
+  main:
+    allow-bean-definition-overriding: true
 server:
   address: 0.0.0.0
-  port: 1221
+  port: 1231
   servlet:
     context-path: /api/user/answer
     # cookie 30 天过期
     session:
       cookie:
         max-age: 2592000
+        path: /api
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true # 驼峰命名
@@ -52,3 +60,5 @@ mybatis-plus:
       logic-delete-field: is_delete # 全局逻辑删除的实体字段名
       logic-delete-value: 1 # 逻辑已删除值（默认为 1）
       logic-not-delete-value: 0 # 逻辑未删除值（默认为 0）
+knife4j:
+  enable: true
