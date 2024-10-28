@@ -68,11 +68,11 @@ knife4j:
 # todo 需替换配置
 ai:
   modelName: "glm-4-flash" # 需替换配置
-  apiKey: "your-api-key" # 需替换配置
+  apiKey: "你的apiKey" # 需替换配置
   request-id-template: "teaAI-request-%s" # 请求id模板，可以不更换
 # minio配置
 # todo 需替换配置
 minio:
-  endpoint: http://myubuntu:9000 # 需替换配置
-  accesskey: ZgESgO0hZAuBV0j6GbH4 # 需替换配置
-  secretkwy: rAa09kf2dD74LtNyUJOpdwBMPMvMPLdvysU1EUSP # 需替换配置
+  endpoint: http://你的minio地址:9000 # 需替换配置
+  accesskey: 你的ak # 需替换配置
+  secretkwy: 你的sk # 需替换配置
