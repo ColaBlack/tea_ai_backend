@@ -35,9 +35,11 @@ public class AiScoreScoringStrategy implements ScoringStrategy {
     @Resource
     private ScoringResultService scoringResultService;
 
-    private final Cache<String, String> answerCacheMap = Caffeine.newBuilder().initialCapacity(1024)
+    private final Cache<String, String> answerCacheMap = Caffeine.newBuilder()
+            .initialCapacity(1024)
             // 缓存有效期
-            .expireAfterAccess(1L, TimeUnit.DAYS).build();
+            .expireAfterAccess(1L, TimeUnit.DAYS)
+            .build();
     @Resource
     private AiService aiService;
 

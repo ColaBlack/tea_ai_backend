@@ -5,7 +5,9 @@ import com.zhipu.oapi.Constants;
 import com.zhipu.oapi.service.v4.model.*;
 import edu.zafu.teaai.config.AiConfig;
 import io.reactivex.Flowable;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,15 +16,20 @@ import java.util.List;
  *
  * @author ColaBlack
  */
+@Component
 public class AiUtils {
 
     /**
-     * 业务ID
+     * AI调用配置信息
      */
-    private static final String REQUEST_ID_TEMPLATE = "teaAI-request";
+    @Resource
+    private AiConfig aiConfig;
 
-
-    private static final ClientV4 CLIENT = new ClientV4.Builder(AiConfig.API_KEY).build();
+    /**
+     * AI调用客户端
+     */
+    @Resource
+    private ClientV4 client = new ClientV4.Builder(aiConfig.getApiKey()).build();
 
     /**
      * 调用AI接口(同步)
@@ -30,13 +37,20 @@ public class AiUtils {
      * @param prompt 提示词
      * @return AI返回的答案
      */
-    public static String aiCaller(String prompt) {
+    public String aiCaller(String prompt) {
         List<ChatMessage> messages = new ArrayList<>();
         ChatMessage chatMessage = new ChatMessage(ChatMessageRole.USER.value(), prompt);
         messages.add(chatMessage);
-        String requestId = String.format(REQUEST_ID_TEMPLATE, System.currentTimeMillis());
-        ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder().model(AiConfig.MODEL_NAME).stream(Boolean.FALSE).invokeMethod(Constants.invokeMethod).messages(messages).requestId(requestId).build();
-        ModelApiResponse invokeModelApiResp = CLIENT.invokeModelApi(chatCompletionRequest);
+        String requestId = String.format(aiConfig.getRequestIdTemplate(), System.currentTimeMillis());
+        ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
+                .model(aiConfig.getModelName())
+                .stream(Boolean.FALSE)
+                .invokeMethod(Constants.invokeMethod)
+                .messages(messages)
+                .requestId(requestId)
+                .build();
+
+        ModelApiResponse invokeModelApiResp = client.invokeModelApi(chatCompletionRequest);
         return invokeModelApiResp.getData().getChoices().get(0).getMessage().getContent().toString();
     }
 
@@ -45,13 +59,19 @@ public class AiUtils {
      *
      * @author ColaBlack
      */
-    public static Flowable<ModelData> aiCallerFlow(String prompt) {
+    public Flowable<ModelData> aiCallerFlow(String prompt) {
         List<ChatMessage> messages = new ArrayList<>();
         ChatMessage chatMessage = new ChatMessage(ChatMessageRole.USER.value(), prompt);
         messages.add(chatMessage);
-        String requestId = String.format(REQUEST_ID_TEMPLATE, System.currentTimeMillis());
-        ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder().model("glm-4-flash").stream(Boolean.TRUE).invokeMethod(Constants.invokeMethod).messages(messages).requestId(requestId).build();
-        ModelApiResponse invokeModelApiResp = CLIENT.invokeModelApi(chatCompletionRequest);
+        String requestId = java.lang.String.format(aiConfig.getRequestIdTemplate(), System.currentTimeMillis());
+        ChatCompletionRequest chatCompletionRequest = ChatCompletionRequest.builder()
+                .model(aiConfig.getModelName()).
+                stream(Boolean.TRUE).
+                invokeMethod(Constants.invokeMethod)
+                .messages(messages)
+                .requestId(requestId)
+                .build();
+        ModelApiResponse invokeModelApiResp = client.invokeModelApi(chatCompletionRequest);
         return invokeModelApiResp.getFlowable();
     }
 }

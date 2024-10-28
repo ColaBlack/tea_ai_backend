@@ -4,9 +4,11 @@ import edu.zafu.teaai.common.BaseResponse;
 import edu.zafu.teaai.common.ErrorCode;
 import edu.zafu.teaai.common.ResultUtils;
 import edu.zafu.teaai.common.exception.ThrowUtils;
+import edu.zafu.teaai.constant.UserConstant;
 import edu.zafu.teaai.model.dto.file.UploadFileRequest;
 import edu.zafu.teaai.model.enums.FileUploadBizEnum;
 import edu.zafu.teaai.service.FileService;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -32,39 +34,54 @@ public class FileController {
     @PostMapping("/upload/avatar")
     public BaseResponse<String> uploadAvatar(@RequestPart("file") MultipartFile file,
                                              UploadFileRequest uploadFileRequest, HttpServletRequest request) {
+
+        //登录用户才能上传文件
+        Object attribute = request.getSession().getAttribute(UserConstant.USER_LOGIN_STATE);
+        ThrowUtils.throwIf(ObjectUtils.isEmpty(attribute), ErrorCode.NOT_LOGIN_ERROR, "用户未登录");
+
         // 校验业务类型
         String biz = uploadFileRequest.getBiz();
         FileUploadBizEnum fileUploadBizEnum = FileUploadBizEnum.getEnumByValue(biz);
         ThrowUtils.throwIf(!Objects.equals(fileUploadBizEnum, FileUploadBizEnum.USER_AVATAR), ErrorCode.PARAMS_ERROR, "上传业务类型不正确");
 
         // 上传文件
-        String res = fileService.uploadImage(file, uploadFileRequest, request);
+        String res = fileService.uploadImage(file, biz, request);
         return ResultUtils.success(res);
     }
 
     @PostMapping("/upload/bank")
     public BaseResponse<String> uploadBankImage(@RequestPart("file") MultipartFile file,
                                                 UploadFileRequest uploadFileRequest, HttpServletRequest request) {
+
+        //登录用户才能上传文件
+        Object attribute = request.getSession().getAttribute(UserConstant.USER_LOGIN_STATE);
+        ThrowUtils.throwIf(ObjectUtils.isEmpty(attribute), ErrorCode.NOT_LOGIN_ERROR, "用户未登录");
+
         // 校验业务类型
         String biz = uploadFileRequest.getBiz();
         FileUploadBizEnum fileUploadBizEnum = FileUploadBizEnum.getEnumByValue(biz);
         ThrowUtils.throwIf(!Objects.equals(fileUploadBizEnum, FileUploadBizEnum.BANK_IMAGE), ErrorCode.PARAMS_ERROR, "上传业务类型不正确");
 
         // 上传文件
-        String res = fileService.uploadImage(file, uploadFileRequest, request);
+        String res = fileService.uploadImage(file, biz, request);
         return ResultUtils.success(res);
     }
 
     @PostMapping("/upload/result")
     public BaseResponse<String> uploadResultImage(@RequestPart("file") MultipartFile file,
                                                   UploadFileRequest uploadFileRequest, HttpServletRequest request) {
+
+        //登录用户才能上传文件
+        Object attribute = request.getSession().getAttribute(UserConstant.USER_LOGIN_STATE);
+        ThrowUtils.throwIf(ObjectUtils.isEmpty(attribute), ErrorCode.NOT_LOGIN_ERROR, "用户未登录");
+
         // 校验业务类型
         String biz = uploadFileRequest.getBiz();
         FileUploadBizEnum fileUploadBizEnum = FileUploadBizEnum.getEnumByValue(biz);
         ThrowUtils.throwIf(!Objects.equals(fileUploadBizEnum, FileUploadBizEnum.RESULT_IMAGE), ErrorCode.PARAMS_ERROR, "上传业务类型不正确");
 
         // 上传文件
-        String res = fileService.uploadImage(file, uploadFileRequest, request);
+        String res = fileService.uploadImage(file, biz, request);
         return ResultUtils.success(res);
     }
 }

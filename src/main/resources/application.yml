@@ -1,5 +1,4 @@
 # 公共配置文件
-
 spring:
   application:
     name: teaai
@@ -68,14 +67,12 @@ knife4j:
 # ai配置
 # todo 需替换配置
 ai:
-  api:
-    key: 123456 # 需替换
-  model:
-    name: "glm-4-flash" # 需替换
-# 图床配置
+  modelName: "glm-4-flash" # 需替换配置
+  apiKey: "your-api-key" # 需替换配置
+  request-id-template: "teaAI-request-%s" # 请求id模板，可以不更换
+# minio配置
 # todo 需替换配置
-image:
-  bed:
-    url: host
-    uploadUrl: host/upload
-    authCode: authCode
+minio:
+  endpoint: http://myubuntu:9000 # 需替换配置
+  accesskey: ZgESgO0hZAuBV0j6GbH4 # 需替换配置
+  secretkwy: rAa09kf2dD74LtNyUJOpdwBMPMvMPLdvysU1EUSP # 需替换配置

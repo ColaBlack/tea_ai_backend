@@ -20,7 +20,8 @@ public interface FileConstant {
     List<String> ALLOW_IMAGE_TYPES = Arrays.asList("jpg", "jpeg", "png", "svg", "webp", "bmp");
 
     /**
-     * 上传的文件路径
+     * 允许上传的存储桶
      */
-    String IMAGE_UPLOAD_PATH = "\\src\\main\\resources\\images\\";
+    String BUCKET_NAME = "teaai";
+
 }

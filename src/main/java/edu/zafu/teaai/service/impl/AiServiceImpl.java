@@ -32,6 +32,9 @@ public class AiServiceImpl implements AiService {
     @Resource
     private QuestionBankService questionBankService;
 
+    @Resource
+    private AiUtils aiUtils;
+
     @Override
     public List<QuestionContentDTO> generateQuestion(AiGenerateQuestionRequest request) {
         //生成prompt
@@ -115,7 +118,7 @@ public class AiServiceImpl implements AiService {
         }
 
         //调用AI接口
-        String ret = AiUtils.aiCaller(prompt);
+        String ret = aiUtils.aiCaller(prompt);
 
         //处理返回结果
         int startIndex = ret.indexOf("[");
@@ -210,7 +213,7 @@ public class AiServiceImpl implements AiService {
         // 建立 SSE 连接对象，0 表示不超时
         SseEmitter emitter = new SseEmitter(0L);
         // AI 生成，sse 流式返回
-        Flowable<ModelData> modelDataFlowable = AiUtils.aiCallerFlow(prompt);
+        Flowable<ModelData> modelDataFlowable = aiUtils.aiCallerFlow(prompt);
 
         StringBuilder contentBuilder = new StringBuilder();
         AtomicInteger flag = new AtomicInteger(0);
@@ -280,7 +283,7 @@ public class AiServiceImpl implements AiService {
                 "4. 如果可能，建议包含一些鼓励性的内容，以激发答题者的学习积极性。\n" +
                 "\n";
         // 调用 AI 接口
-        String ret = AiUtils.aiCaller(prompt);
+        String ret = aiUtils.aiCaller(prompt);
 
         // 结果处理
         int start = ret.indexOf("{");
@@ -315,7 +318,7 @@ public class AiServiceImpl implements AiService {
                 "注意：评价应客观、具体，并包含改进建议。\n";
 
         // 调用 AI 接口
-        String ret = AiUtils.aiCaller(prompt);
+        String ret = aiUtils.aiCaller(prompt);
 
         // 结果处理
         int start = ret.indexOf("{");
