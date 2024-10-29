@@ -141,9 +141,3 @@ fabric.properties
 
 # Android studio 3.1+ serialized cache file
 .idea/caches/build_file_checksums.ser
-
-# AI 配置文件
-AiConfig.java
-
-#图床配置文件
-ImageBedConstant.java
