@@ -11,7 +11,6 @@ spring:
       matching-strategy: ant_path_matcher
   # session 配置
   session:
-
     store-type: redis
     # 30 天过期
     timeout: 2592000
@@ -19,14 +18,15 @@ spring:
   datasource:
     # todo 需替换配置
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/teaai
+    url: jdbc:mysql://192.168.123.128:3306/teaai
     username: root
     password: 123456
   # Redis 配置
   redis:
     # todo 需替换配置
     database: 1
-    host: localhost
+    host: 192.168.123.128
+    password: 123456
     port: 6379
     timeout: 5000
   # 文件上传
@@ -58,21 +58,15 @@ knife4j:
   openapi:
     title: "接口文档"
     version: 1.0
-    group:
-      default:
-        api-rule: package
-        api-rule-resources:
-          - edu.zafu.teaai.controller
-
 # ai配置
 # todo 需替换配置
 ai:
   modelName: "glm-4-flash" # 需替换配置
-  apiKey: "你的apiKey" # 需替换配置
+  apiKey: "你的key" # 需替换配置
   request-id-template: "teaAI-request-%s" # 请求id模板，可以不更换
 # minio配置
 # todo 需替换配置
 minio:
-  endpoint: http://你的minio地址:9000 # 需替换配置
-  accesskey: 你的ak # 需替换配置
-  secretkwy: 你的sk # 需替换配置
+  endpoint: http://192.168.123.128:9000 # 需替换配置
+  accessKey: DvEo6KpOOkn2jXjTyRwJ # 需替换配置
+  secretKey: XvqPJ7z6EnyjzWukWd7kj8BYCJkqJMXMhnTAqYOB # 需替换配置
