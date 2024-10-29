@@ -80,7 +80,7 @@ minio:
 ```
 
 5 .创建src/main/resources/images文件夹，用于存放临时上传的图片
-6.运行sql/create_table.sql里的建表语句创建项目所需的表
+6.运行doc/create_table.sql里的建表语句创建项目所需的表
 7.运行MainApplication启动项目
 
 #### 使用说明

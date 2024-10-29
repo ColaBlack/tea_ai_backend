@@ -83,7 +83,7 @@ minio:
 ```
 
 5.Create a folder named src/main/resources/images to store temporarily uploaded images.
-6.Run the SQL statements in sql/create_table.sql to create the tables required for the project.
+6.Run the SQL statements in doc/create_table.sql to create the tables required for the project.
 7.Run MainApplication to start the project.
 
 #### Usage Instructions
