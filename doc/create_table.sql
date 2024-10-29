@@ -2,11 +2,10 @@ create database if not exists teaai;
 
 use teaai;
 
--- auto-generated definition
-create table question
+create table if not exists teaai.question
 (
     id               bigint auto_increment comment 'id'
-        primary key,
+    primary key,
     question_content text                               null comment '题目内容（json格式）',
     bankId           bigint                             not null comment '对应题库 id',
     userId           bigint                             not null comment '创建用户 id',
@@ -16,14 +15,10 @@ create table question
 )
     comment '题目';
 
-create index idx_appId
-    on question (bankId);
-
--- auto-generated definition
-create table question_bank
+create table if not exists teaai.question_bank
 (
     id               bigint auto_increment comment 'id'
-        primary key,
+    primary key,
     bank_name        varchar(128)                       not null comment '题库名',
     bank_desc        varchar(2048)                      null comment '题库描述',
     bank_icon        varchar(1024)                      null comment '题库图标',
@@ -37,11 +32,11 @@ create table question_bank
     create_time      datetime default CURRENT_TIMESTAMP not null comment '创建时间',
     update_time      datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
     is_delete        tinyint  default 0                 not null comment '是否删除'
-)
+    )
     comment '题库表';
 
 create index idx_bankName
-    on question_bank (bank_name);
+    on teaai.question_bank (bank_name);
 
 -- auto-generated definition
 create table scoring_result

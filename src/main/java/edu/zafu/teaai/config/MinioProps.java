@@ -22,11 +22,11 @@ public class MinioProps {
     /**
      * minio的ak
      */
-    private String accesskey;
+    private String accessKey;
 
     /**
      * minio的sk
      */
-    private String secretkwy;
+    private String secretKey;
 }
 

@@ -7,6 +7,7 @@ import edu.zafu.teaai.config.AiConfig;
 import io.reactivex.Flowable;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +30,22 @@ public class AiUtils {
      * AI调用客户端
      */
     @Resource
-    private ClientV4 client = new ClientV4.Builder(aiConfig.getApiKey()).build();
+    private ClientV4 client;
+
+    @PostConstruct
+    public void init() {
+        // 确保在构建客户端之前aiConfig不为null
+        if (aiConfig == null) {
+            throw new IllegalStateException("AiConfig对象初始化失败");
+        }
+        // 确保apiKey不为null
+        String apiKey = aiConfig.getApiKey();
+        if (apiKey == null || apiKey.trim().isEmpty()) {
+            throw new IllegalStateException("API key 不能为空");
+        }
+        // 使用配置信息初始化客户端
+        client = new ClientV4.Builder(apiKey).build();
+    }
 
     /**
      * 调用AI接口(同步)

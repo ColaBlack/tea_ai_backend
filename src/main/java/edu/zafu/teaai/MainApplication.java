@@ -14,7 +14,6 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 @SpringBootApplication
 @MapperScan("edu.zafu.teaai.mapper")
 @EnableAspectJAutoProxy(proxyTargetClass = true, exposeProxy = true)
-@ComponentScan(basePackages = {"com.zhipu.oapi"})
 public class MainApplication {
 
     public static void main(String[] args) {

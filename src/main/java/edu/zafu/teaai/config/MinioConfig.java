@@ -27,7 +27,7 @@ public class MinioConfig {
     public MinioClient minioClient() {
         return MinioClient.builder()
                 .endpoint(props.getEndpoint())
-                .credentials(props.getAccesskey(), props.getSecretkwy())
+                .credentials(props.getAccessKey(), props.getSecretKey())
                 .build();
     }
 }

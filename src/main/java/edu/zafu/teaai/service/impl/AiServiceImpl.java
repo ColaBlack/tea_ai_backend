@@ -293,7 +293,7 @@ public class AiServiceImpl implements AiService {
     }
 
     @Override
-    public String aiJudgeScore(int score, QuestionBank questionBank) throws Exception {
+    public String aiJudgeScore(int score, QuestionBank questionBank) {
         String prompt = "\n" +
                 "你是一个高效的AI评估系统。使用以下数据进行分析：\n" +
                 "\n" +
