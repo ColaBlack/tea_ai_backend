@@ -95,7 +95,7 @@ public class QuestionController {
         Question oldQuestion = questionService.getById(id);
         ThrowUtils.throwIf(oldQuestion == null, ErrorCode.NOT_FOUND_ERROR);
         // 仅本人或管理员可删除
-        if (!oldQuestion.getUserid().equals(user.getId()) && !userService.isAdmin(request)) {
+        if (!oldQuestion.getUserid().equals(user.getId()) && userService.isAdmin(request)) {
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
         }
         // 操作数据库
@@ -132,22 +132,6 @@ public class QuestionController {
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(true);
     }
-
-//    /**
-//     * 根据 id 获取题目（封装类）
-//     *
-//     * @param id 题目 id
-//     * @return 题目封装类
-//     */
-//    @GetMapping("/get/vo")
-//    public BaseResponse<QuestionVO> getQuestionVOById(long id, HttpServletRequest request) {
-//        ThrowUtils.throwIf(id <= 0, ErrorCode.PARAMS_ERROR);
-//        // 查询数据库
-//        Question question = questionService.getById(id);
-//        ThrowUtils.throwIf(question == null, ErrorCode.NOT_FOUND_ERROR);
-//        // 获取封装类
-//        return ResultUtils.success(questionService.getQuestionVO(question, request));
-//    }
 
     /**
      * 分页获取题目列表（仅管理员可用）

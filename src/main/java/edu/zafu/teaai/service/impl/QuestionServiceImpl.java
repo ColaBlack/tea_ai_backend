@@ -13,7 +13,6 @@ import edu.zafu.teaai.model.po.Question;
 import edu.zafu.teaai.model.po.QuestionBank;
 import edu.zafu.teaai.model.po.User;
 import edu.zafu.teaai.model.vo.QuestionVO;
-import edu.zafu.teaai.model.vo.UserVO;
 import edu.zafu.teaai.service.QuestionBankService;
 import edu.zafu.teaai.service.QuestionService;
 import edu.zafu.teaai.service.UserService;
@@ -103,33 +102,6 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question> i
                 sortOrder.equals(CommonConstant.SORT_ORDER_ASC),
                 sortField);
         return queryWrapper;
-    }
-
-    /**
-     * 获取题目封装
-     *
-     * @param question 题目对象
-     * @param request  请求对象
-     * @return 题目封装
-     */
-    @Override
-    public QuestionVO getQuestionVO(Question question, HttpServletRequest request) {
-        // 对象转封装类
-        QuestionVO questionVO = QuestionVO.poToVo(question);
-
-        // 可以根据需要为封装对象补充值，不需要的内容可以删除
-        // region 可选
-        // 1. 关联查询用户信息
-        Long userId = question.getUserid();
-        User user = null;
-        if (userId != null && userId > 0) {
-            user = userService.getById(userId);
-        }
-        UserVO userVO = userService.getUserVO(user);
-        questionVO.setUser(userVO);
-        // endregion
-
-        return questionVO;
     }
 
     /**

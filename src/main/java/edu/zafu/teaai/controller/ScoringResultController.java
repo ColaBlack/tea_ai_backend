@@ -92,7 +92,7 @@ public class ScoringResultController {
         ScoringResult oldScoringResult = scoringResultService.getById(id);
         ThrowUtils.throwIf(oldScoringResult == null, ErrorCode.NOT_FOUND_ERROR);
         // 仅本人或管理员可删除
-        if (!oldScoringResult.getUserid().equals(user.getId()) && !userService.isAdmin(request)) {
+        if (!oldScoringResult.getUserid().equals(user.getId()) && userService.isAdmin(request)) {
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
         }
         // 操作数据库
@@ -129,22 +129,6 @@ public class ScoringResultController {
         return ResultUtils.success(true);
     }
 
-//    /**
-//     * 根据 id 获取评分结果（封装类）
-//     *
-//     * @param id 评分结果 id
-//     * @return 评分结果封装类
-//     */
-//    @GetMapping("/get/vo")
-//    public BaseResponse<ScoringResultVO> getScoringResultVOById(long id, HttpServletRequest request) {
-//        ThrowUtils.throwIf(id <= 0, ErrorCode.PARAMS_ERROR);
-//        // 查询数据库
-//        ScoringResult scoringResult = scoringResultService.getById(id);
-//        ThrowUtils.throwIf(scoringResult == null, ErrorCode.NOT_FOUND_ERROR);
-//        // 获取封装类
-//        return ResultUtils.success(scoringResultService.getScoringResultVO(scoringResult, request));
-//    }
-
     /**
      * 分页获取评分结果列表（仅管理员可用）
      *
@@ -180,29 +164,6 @@ public class ScoringResultController {
         return ResultUtils.success(scoringResultService.getScoringResultVOPage(scoringResultPage, request));
     }
 
-//    /**
-//     * 分页获取当前登录用户创建的评分结果列表
-//     *
-//     * @param scoringResultQueryRequest 查询请求
-//     * @param request                   请求对象
-//     * @return 分页结果
-//     */
-//    @PostMapping("/my/list/page/vo")
-//    public BaseResponse<Page<ScoringResultVO>> listMyScoringResultVOByPage(@RequestBody ScoringResultQueryRequest scoringResultQueryRequest, HttpServletRequest request) {
-//        ThrowUtils.throwIf(scoringResultQueryRequest == null, ErrorCode.PARAMS_ERROR);
-//        // 补充查询条件，只查询当前登录用户的数据
-//        User loginUser = userService.getLoginUser(request);
-//        scoringResultQueryRequest.setUserid(loginUser.getId());
-//        long current = scoringResultQueryRequest.getCurrent();
-//        long size = scoringResultQueryRequest.getPageSize();
-//        // 限制爬虫
-//        ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
-//        // 查询数据库
-//        Page<ScoringResult> scoringResultPage = scoringResultService.page(new Page<>(current, size), scoringResultService.getQueryWrapper(scoringResultQueryRequest));
-//        // 获取封装类
-//        return ResultUtils.success(scoringResultService.getScoringResultVOPage(scoringResultPage, request));
-//    }
-
     /**
      * 编辑评分结果（给用户使用）
      *
@@ -227,7 +188,7 @@ public class ScoringResultController {
         ScoringResult oldScoringResult = scoringResultService.getById(id);
         ThrowUtils.throwIf(oldScoringResult == null, ErrorCode.NOT_FOUND_ERROR);
         // 仅本人或管理员可编辑
-        if (!oldScoringResult.getUserid().equals(loginUser.getId()) && !userService.isAdmin(loginUser)) {
+        if (!oldScoringResult.getUserid().equals(loginUser.getId()) && userService.isAdmin(loginUser)) {
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR);
         }
         // 操作数据库

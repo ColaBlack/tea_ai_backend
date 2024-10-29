@@ -1,6 +1,5 @@
 package edu.zafu.teaai.service.impl;
 
-import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import edu.zafu.teaai.common.ErrorCode;
@@ -22,9 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static edu.zafu.teaai.constant.UserConstant.USER_LOGIN_STATE;
 
@@ -37,10 +33,6 @@ import static edu.zafu.teaai.constant.UserConstant.USER_LOGIN_STATE;
 @Slf4j
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
-    /**
-     * 盐值，混淆密码
-     */
-    public static final String SALT = "ColaBlack";
 
     @Override
     public long userRegister(String userAccount, String userPassword, String checkPassword) {
@@ -67,7 +59,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号重复");
             }
             // 2. 加密
-            String encryptPassword = DigestUtils.md5DigestAsHex((SALT + userPassword).getBytes());
+            String encryptPassword = DigestUtils.md5DigestAsHex((UserConstant.SALT + userPassword).getBytes());
             // 3. 插入数据
             User user = new User();
             user.setUserAccount(userAccount);
@@ -90,7 +82,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号由字母、数字组成，长度在4-20位之间");
         }
         // 2. 加密
-        String encryptPassword = DigestUtils.md5DigestAsHex((SALT + userPassword).getBytes());
+        String encryptPassword = DigestUtils.md5DigestAsHex((UserConstant.SALT + userPassword).getBytes());
         // 查询用户是否存在
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_account", userAccount);
@@ -128,22 +120,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     /**
-     * 获取当前登录用户（允许未登录）
-     */
-    @Override
-    public User getLoginUserPermitNull(HttpServletRequest request) {
-        // 先判断是否已登录
-        Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
-        User currentUser = (User) userObj;
-        if (currentUser == null || currentUser.getId() == null) {
-            return null;
-        }
-        // 从数据库查询（追求性能的话可以注释，直接走缓存）
-        long userId = currentUser.getId();
-        return this.getById(userId);
-    }
-
-    /**
      * 是否为管理员
      */
     @Override
@@ -156,7 +132,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public boolean isAdmin(User user) {
-        return user != null && UserRoleEnum.ADMIN.getValue().equals(user.getUserRole());
+        return user == null || !UserRoleEnum.ADMIN.getValue().equals(user.getUserRole());
     }
 
     /**
@@ -190,14 +166,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         UserVO userVO = new UserVO();
         BeanUtils.copyProperties(user, userVO);
         return userVO;
-    }
-
-    @Override
-    public List<UserVO> getUserVO(List<User> userList) {
-        if (CollUtil.isEmpty(userList)) {
-            return new ArrayList<>();
-        }
-        return userList.stream().map(this::getUserVO).collect(Collectors.toList());
     }
 
     @Override

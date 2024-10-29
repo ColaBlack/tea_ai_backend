@@ -1,7 +1,6 @@
 package edu.zafu.teaai.service;
 
 import edu.zafu.teaai.model.dto.ai.AiGenerateQuestionRequest;
-import edu.zafu.teaai.model.dto.question.QuestionContentDTO;
 import edu.zafu.teaai.model.po.QuestionBank;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -13,14 +12,6 @@ import java.util.List;
  * @author ColaBlack
  */
 public interface AiService {
-
-    /**
-     * AI生成题目(同步)
-     *
-     * @param request AI生成题目请求
-     * @return 题目内容DTO列表
-     */
-    List<QuestionContentDTO> generateQuestion(AiGenerateQuestionRequest request);
 
     /**
      * AI生成题目(SSE)

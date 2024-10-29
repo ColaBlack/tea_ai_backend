@@ -5,7 +5,6 @@ import com.zhipu.oapi.service.v4.model.ModelData;
 import edu.zafu.teaai.common.ErrorCode;
 import edu.zafu.teaai.common.exception.ThrowUtils;
 import edu.zafu.teaai.model.dto.ai.AiGenerateQuestionRequest;
-import edu.zafu.teaai.model.dto.question.QuestionContentDTO;
 import edu.zafu.teaai.model.po.QuestionBank;
 import edu.zafu.teaai.service.AiService;
 import edu.zafu.teaai.service.QuestionBankService;
@@ -34,99 +33,6 @@ public class AiServiceImpl implements AiService {
 
     @Resource
     private AiUtils aiUtils;
-
-    @Override
-    public List<QuestionContentDTO> generateQuestion(AiGenerateQuestionRequest request) {
-        //生成prompt
-        Long bankId = request.getBankId();
-        QuestionBank questionBank = questionBankService.getById(bankId);
-        ThrowUtils.throwIf(questionBank == null, ErrorCode.PARAMS_ERROR, "题库不存在");
-        //生成提示词
-        String prompt = "";
-        if (questionBank.getBankType() == 1) {
-            prompt = "\n" +
-                    "你是AI出题助手。按以下要求出题:\n" +
-                    "\n" +
-                    "1. 题库信息:\n" +
-                    "<题库名称>" + questionBank.getBankName() + "</题库名称>\n" +
-                    "<题库描述>" + questionBank.getBankDesc() + "</题库描述>\n" +
-                    "\n" +
-                    "2. 出题规则:\n" +
-                    "- 出" + request.getQuestionNumber() + "道题,每题" + request.getOptionNumber() + "个选项\n" +
-                    "- 题目和选项力求简洁\n" +
-                    "- 题目不加序号,不重复\n" +
-                    "\n" +
-                    "3. 输出格式:\n" +
-                    "```json\n" +
-                    "[\n" +
-                    "  {\n" +
-                    "    \"title\": \"题目\",\n" +
-                    "    \"options\": [\n" +
-                    "      {\"key\": \"A\", \"value\": \"选项内容\"},\n" +
-                    "      {\"key\": \"B\", \"value\": \"选项内容\"}\n" +
-                    "    ]\n" +
-                    "  }\n" +
-                    "]\n" +
-                    "```\n" +
-                    "\n" +
-                    "4. 检查:\n" +
-                    "- 确保题目无序号\n" +
-                    "- 核对题目数量和选项数量\n" +
-                    "\n" +
-                    "直接输出JSON,不要其他说明。\n";
-        }
-        if (questionBank.getBankType() == 0) {
-            prompt = "\n" +
-                    "你是一个高效的题目生成AI。使用以下输入创建测试题目：\n" +
-                    "\n" +
-                    "名称：" + questionBank.getBankName() + "\n" +
-                    "描述：" + questionBank.getBankDesc() + "\n" +
-                    "\n" +
-                    "生成要求：\n" +
-                    "1. 题目数量：" + request.getQuestionNumber() + "\n" +
-                    "2. 每题选项数：" + request.getOptionNumber() + "\n" +
-                    "3. 题目和选项须简洁\n" +
-                    "4. 题目不含序号\n" +
-                    "5. 题目不重复\n" +
-                    "6. 选项键值为大写字母（A、B、C...）\n" +
-                    "\n" +
-                    "输出格式：\n" +
-                    "```json\n" +
-                    "[\n" +
-                    "  {\n" +
-                    "    \"title\": \"题目文本\",\n" +
-                    "    \"options\": [\n" +
-                    "      {\n" +
-                    "        \"key\": \"A\",\n" +
-                    "        \"value\": \"选项内容\",\n" +
-                    "        \"score\": 分数\n" +
-                    "      },\n" +
-                    "      ...\n" +
-                    "    ]\n" +
-                    "  },\n" +
-                    "  ...\n" +
-                    "]\n" +
-                    "```\n" +
-                    "\n" +
-                    "注意事项：\n" +
-                    "- 确保输出为有效的JSON数组\n" +
-                    "- 分数应为整数\n" +
-                    "- 仔细检查并移除任何题目中的序号\n" +
-                    "\n" +
-                    "立即开始生成题目，无需其他说明。\n" +
-                    "\n";
-        }
-
-        //调用AI接口
-        String ret = aiUtils.aiCaller(prompt);
-
-        //处理返回结果
-        int startIndex = ret.indexOf("[");
-        int endIndex = ret.lastIndexOf("]");
-        String jsonStr = ret.substring(startIndex, endIndex + 1);
-        System.out.println(jsonStr);
-        return JSONUtil.toList(jsonStr, QuestionContentDTO.class);
-    }
 
     @Override
     public SseEmitter generateQuestionSSE(AiGenerateQuestionRequest request) {

@@ -22,8 +22,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import static edu.zafu.teaai.service.impl.UserServiceImpl.SALT;
-
 /**
  * 用户接口
  *
@@ -114,7 +112,7 @@ public class UserController {
         BeanUtils.copyProperties(userAddRequest, user);
         // 默认密码 ColaBlack123456
         String defaultPassword = "ColaBlack123456";
-        String encryptPassword = DigestUtils.md5DigestAsHex((SALT + defaultPassword).getBytes());
+        String encryptPassword = DigestUtils.md5DigestAsHex((UserConstant.SALT + defaultPassword).getBytes());
         user.setUserPassword(encryptPassword);
         boolean result = userService.save(user);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
@@ -149,36 +147,6 @@ public class UserController {
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(true);
     }
-//
-//    /**
-//     * 根据 id 获取用户（仅管理员）
-//     *
-//     * @param id 用户 id
-//     * @return 用户
-//     */
-//    @GetMapping("/get")
-//    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
-//    public BaseResponse<User> getUserById(long id) {
-//        if (id <= 0) {
-//            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-//        }
-//        User user = userService.getById(id);
-//        ThrowUtils.throwIf(user == null, ErrorCode.NOT_FOUND_ERROR);
-//        return ResultUtils.success(user);
-//    }
-
-//    /**
-//     * 根据 id 获取包装类
-//     *
-//     * @param id 用户 id
-//     * @return 用户包装类
-//     */
-//    @GetMapping("/get/vo")
-//    public BaseResponse<UserVO> getUserVOById(long id) {
-//        BaseResponse<User> response = getUserById(id);
-//        User user = response.getData();
-//        return ResultUtils.success(userService.getUserVO(user));
-//    }
 
     /**
      * 分页获取用户列表（仅管理员）
@@ -195,48 +163,7 @@ public class UserController {
         return ResultUtils.success(userPage);
     }
 
-//    /**
-//     * 分页获取用户封装列表
-//     *
-//     * @param userQueryRequest 条件查询请求体
-//     * @return 用户封装列表
-//     */
-//    @PostMapping("/list/page/vo")
-//    public BaseResponse<Page<UserVO>> listUserVOByPage(@RequestBody UserQueryRequest userQueryRequest) {
-//        if (userQueryRequest == null) {
-//            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-//        }
-//        long current = userQueryRequest.getCurrent();
-//        long size = userQueryRequest.getPageSize();
-//        // 限制爬虫
-//        ThrowUtils.throwIf(size > 20, ErrorCode.PARAMS_ERROR);
-//        Page<User> userPage = userService.page(new Page<>(current, size), userService.getQueryWrapper(userQueryRequest));
-//        Page<UserVO> userVOPage = new Page<>(current, size, userPage.getTotal());
-//        List<UserVO> userVO = userService.getUserVO(userPage.getRecords());
-//        userVOPage.setRecords(userVO);
-//        return ResultUtils.success(userVOPage);
-//    }
 
     // endregion
 
-//    /**
-//     * 更新个人信息
-//     *
-//     * @param userUpdateMyRequest 用户更新请求
-//     * @param request             请求
-//     * @return 是否成功
-//     */
-//    @PostMapping("/update/my")
-//    public BaseResponse<Boolean> updateMyUser(@RequestBody UserUpdateMyRequest userUpdateMyRequest, HttpServletRequest request) {
-//        if (userUpdateMyRequest == null) {
-//            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-//        }
-//        User loginUser = userService.getLoginUser(request);
-//        User user = new User();
-//        BeanUtils.copyProperties(userUpdateMyRequest, user);
-//        user.setId(loginUser.getId());
-//        boolean result = userService.updateById(user);
-//        ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
-//        return ResultUtils.success(true);
-//    }
 }

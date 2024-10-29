@@ -34,15 +34,6 @@ public interface ScoringResultService extends IService<ScoringResult> {
     QueryWrapper<ScoringResult> getQueryWrapper(ScoringResultQueryRequest scoringResultQueryRequest);
 
     /**
-     * 获取评分结果封装
-     *
-     * @param scoringResult 评分结果
-     * @param request       请求
-     * @return 评分结果封装
-     */
-    ScoringResultVO getScoringResultVO(ScoringResult scoringResult, HttpServletRequest request);
-
-    /**
      * 分页获取评分结果封装
      *
      * @param scoringResultPage 分页对象

@@ -34,15 +34,6 @@ public interface QuestionService extends IService<Question> {
     QueryWrapper<Question> getQueryWrapper(QuestionQueryRequest questionQueryRequest);
 
     /**
-     * 获取题目封装
-     *
-     * @param question 题目实体
-     * @param request  请求对象
-     * @return 题目封装
-     */
-    QuestionVO getQuestionVO(Question question, HttpServletRequest request);
-
-    /**
      * 分页获取题目封装
      *
      * @param questionPage 分页对象

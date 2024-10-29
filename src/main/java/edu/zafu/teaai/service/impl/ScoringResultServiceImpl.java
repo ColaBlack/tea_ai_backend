@@ -14,7 +14,6 @@ import edu.zafu.teaai.model.po.QuestionBank;
 import edu.zafu.teaai.model.po.ScoringResult;
 import edu.zafu.teaai.model.po.User;
 import edu.zafu.teaai.model.vo.ScoringResultVO;
-import edu.zafu.teaai.model.vo.UserVO;
 import edu.zafu.teaai.service.QuestionBankService;
 import edu.zafu.teaai.service.ScoringResultService;
 import edu.zafu.teaai.service.UserService;
@@ -118,33 +117,6 @@ public class ScoringResultServiceImpl extends ServiceImpl<ScoringResultMapper, S
         // 排序规则
         queryWrapper.orderBy(SqlUtils.validSortField(sortField), sortOrder.equals(CommonConstant.SORT_ORDER_ASC), sortField);
         return queryWrapper;
-    }
-
-    /**
-     * 获取评分结果封装
-     *
-     * @param scoringResult 评分结果对象
-     * @param request       请求对象
-     * @return 评分结果封装
-     */
-    @Override
-    public ScoringResultVO getScoringResultVO(ScoringResult scoringResult, HttpServletRequest request) {
-        // 对象转封装类
-        ScoringResultVO scoringResultVO = ScoringResultVO.objToVo(scoringResult);
-
-        // 可以根据需要为封装对象补充值，不需要的内容可以删除
-        // region 可选
-        // 1. 关联查询用户信息
-        Long userId = scoringResult.getUserid();
-        User user = null;
-        if (userId != null && userId > 0) {
-            user = userService.getById(userId);
-        }
-        UserVO userVO = userService.getUserVO(user);
-        scoringResultVO.setUser(userVO);
-        // endregion
-
-        return scoringResultVO;
     }
 
     /**

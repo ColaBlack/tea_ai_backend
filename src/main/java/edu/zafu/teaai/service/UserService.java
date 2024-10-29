@@ -9,7 +9,6 @@ import edu.zafu.teaai.model.vo.LoginUserVO;
 import edu.zafu.teaai.model.vo.UserVO;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 /**
  * 用户服务
@@ -44,11 +43,6 @@ public interface UserService extends IService<User> {
     User getLoginUser(HttpServletRequest request);
 
     /**
-     * 获取当前登录用户（允许未登录）
-     */
-    User getLoginUserPermitNull(HttpServletRequest request);
-
-    /**
      * 是否为管理员
      */
     boolean isAdmin(HttpServletRequest request);
@@ -72,11 +66,6 @@ public interface UserService extends IService<User> {
      * 获取脱敏的用户信息
      */
     UserVO getUserVO(User user);
-
-    /**
-     * 获取脱敏的用户信息
-     */
-    List<UserVO> getUserVO(List<User> userList);
 
     /**
      * 获取查询条件

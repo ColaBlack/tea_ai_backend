@@ -58,6 +58,7 @@ public interface QuestionBankService extends IService<QuestionBank> {
      * @param request       请求对象
      * @param id            题库id
      * @param reviewStatus  审核状态
+     * @return 审核通过与否
      */
     boolean questionBankReview(String reviewMessage, HttpServletRequest request, Long id, Integer reviewStatus);
 }
